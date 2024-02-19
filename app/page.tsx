@@ -16,7 +16,7 @@ export default function Home() {
 
         <h2 className="font-semibold mb-4">Ringkasan Order Anda</h2>
         <div className="">
-          <div className="flex flex-auto gap-6">
+          <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
             <div className="w-full pl-2 border rounded-lg p-4">
               <div className="text-4xl text-blue-500">PHILIPS</div>
               <div className="flex flex-nowrap gap-1 mt-2 mb-2"><p className="text-sm font-bold">Order anda bulan ini</p><span className="bg-green-200 font-bold text-green-700 rounded-md px-2 text-sm">+30</span></div>
