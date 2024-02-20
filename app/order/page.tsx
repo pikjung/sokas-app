@@ -29,26 +29,32 @@ const data = [
 
 const Home = () => {
 
-  const [brandProducts, setBrandProducts] = useState([]);
+  const [brandProducts, setBrandProducts] = useState('');
   const [options, setOptions] = useState([]);
   const [produk, setProduk] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   function handleBrandChanges(value: any) {
-    const filteredBrandProducts = products.filter(product =>
-      product.brand.toLowerCase().includes(value.toLowerCase)
-    )
-    setBrandProducts(filteredBrandProducts)
+    setOptions([])
+    setBrandProducts(value)
   }
 
   function handleProductChange(searchParams: string) {
     const filteredProducts = products.filter(product =>
-      product.produk.toString().toLowerCase().includes(searchParams.toLowerCase())
+      product.produk.toString().toLowerCase().includes(searchParams.toLowerCase()) &&
+      product.brand.toLowerCase().includes(brandProducts.toLowerCase())
     )
     setOptions(filteredProducts)
   }
 
   function handleChangeProduct(selectParam: string) {
-    setProduk([...produk, selectParam])
+    const product = products.filter(p => p.kode.includes(selectParam))
+    setProduk([...produk, product[0]])
+    setShowDropdown(!showDropdown)
+  }
+
+  function handleShowDropdown() {
+    setShowDropdown(!showDropdown)
   }
 
   return (
@@ -56,22 +62,42 @@ const Home = () => {
       <div className="text-2xl mb-2">Form Sales Order KAS</div>
       <div className="mb-8 text-slate-400 font-light text-sm">Isi form sesuai dengan produk yang akan anda beli</div>
 
-      <div className="w-full border rounded-lg p-5">
-        <h2 className="font-bold mb-4">Buat Order</h2>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
-          <Select id="brand" label="Pilih Brand" handleChange={handleBrandChanges} >
-            {data.map((item) => (
-              <option key={item.value} value={item.value}>{item.name}</option>
+      <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-4">
+        <div className="w-full border rounded-lg p-5">
+          <h2 className="font-bold mb-4">Buat Order</h2>
+          <div className="grid grid-cols-1 gap-4">
+            <Select id="brand" label="Pilih Brand" handleChange={handleBrandChanges} >
+              {data.map((item) => (
+                <option key={item.value} value={item.value}>{item.name}</option>
+              ))}
+            </Select>
+            <DropdownInput
+              id="product"
+              showDropdown={showDropdown}
+              handleShowDropdown={handleShowDropdown}
+              options={options}
+              label="Pilih Produk"
+              handleChangeProduct={handleChangeProduct}
+              handleChange={handleProductChange}
+              placeholder="TL-D 36W"
+            />
+            {produk.map((item) => (
+              <MultipleInput key={item.kode} produk={item.produk} />
             ))}
-          </Select>
-          <DropdownInput id="product" label="Pilih Produk" handleChangeProduct={handleChangeProduct} handleChange={handleProductChange} placeholder="TL-D 36W" />
+
+            <div className="mt-5 border-t p-4">
+              <button className="float-right rounded-sm bg-indigo-500 p-2 text-white hover:bg-indigo-600">Tambah ke troli</button>
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          {produk.map((item) => (
-              <MultipleInput key={item} produk={item}/>
-            ))}
+
+        <div className="w-full border rounded-lg p-5">
+          <h2 className="font-bold mb-4">Order paket bundling</h2>
+
         </div>
       </div>
+
+      <div className="mt-4"></div>
     </Container>
   );
 }
