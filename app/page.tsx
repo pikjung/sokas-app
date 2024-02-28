@@ -3,50 +3,49 @@
 import Navbar from "./components/navbar/Navbar"
 import BottomNavigation from "./components/navbar/BottomNavigation"
 import Container from "./components/Container"
-import Card from "./components/Card"
-import { TbLamp } from "react-icons/tb"
+import HeaderPage from "./components/HeaderPage"
+import Card from "./components/Card";
 
 export default function Home() {
   return (
     <>
       <Navbar />
       <Container flex={false} wrap={false}>
+        <HeaderPage title="Toko Permai">
+          Anda memiliki <span className="text-slate-900 font-bold"> 4 Order diproses</span>, dan <span className="text-teal-500">19 Order selesai</span>!
+        </HeaderPage>
         <div className="text-2xl mb-2">Halo, <span className="font-bold">Toko Permai</span></div>
-        <div className="mb-8 text-slate-400 font-light text-sm">Anda memiliki <span className="text-slate-900 font-bold"> 4 Order diproses</span>, dan <span className="text-teal-500">19 Order selesai</span>!</div>
+        <div className="mb-8 text-slate-400 font-light text-sm"></div>
 
         <h2 className="font-semibold mb-4">Ringkasan Order Anda</h2>
         <div className="">
           <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
-            <div className="w-full pl-2 border rounded-lg p-4">
+            <Card>
               <div className="text-4xl text-blue-500">PHILIPS</div>
               <div className="flex flex-nowrap gap-1 mt-2 mb-2"><p className="text-sm font-bold">Order anda bulan ini</p><span className="bg-green-200 font-bold text-green-700 rounded-md px-2 text-sm">+30</span></div>
               <div className="text-sm flex flex-nowrap text-slate-400">Total keseluruhan <span className="font-bold mx-1 text-slate-900">400</span> Order</div>
-            </div>
-            <div className="w-full pl-2 border rounded-lg p-4">
+            </Card>
+            <Card>
               <div className="text-4xl text-blue-700">PANASONIC</div>
               <div className="flex flex-nowrap gap-1 mt-2 mb-2"><p className="text-sm font-bold">Order anda bulan ini</p><span className="bg-green-200 font-bold text-green-700 rounded-md px-2 text-sm">+30</span></div>
               <div className="text-sm flex flex-nowrap text-slate-400">Total keseluruhan <span className="font-bold mx-1 text-slate-900">400</span> Order</div>
-            </div>
-            <div className="w-full pl-2 border rounded-lg p-4">
+            </Card>
+            <Card>
               <div className="text-4xl text-green-500">SCHNEIDER</div>
               <div className="flex flex-nowrap gap-1 mt-2 mb-2"><p className="text-sm font-bold">Order anda bulan ini</p><span className="bg-green-200 font-bold text-green-700 rounded-md px-2 text-sm">+30</span></div>
               <div className="text-sm flex flex-nowrap text-slate-400">Total keseluruhan <span className="font-bold mx-1 text-slate-900">400</span> Order</div>
-            </div>
-            <div className="w-full pl-2 border rounded-lg p-4">
+            </Card>
+            <Card>
               <div className="text-4xl text-red-500">SUPREME</div>
               <div className="flex flex-nowrap gap-1 mt-2 mb-2"><p className="text-sm font-bold">Order anda bulan ini</p><span className="bg-green-200 font-bold text-green-700 rounded-md px-2 text-sm">+30</span></div>
               <div className="text-sm flex flex-nowrap text-slate-400">Total keseluruhan <span className="font-bold mx-1 text-slate-900">400</span> Order</div>
-            </div>
+            </Card>
           </div>
         </div>
 
         <div className="mt-8 gap-2">
-          <div className="w-full flex gap-6">
-            <div className="w-full border rounded-lg p-6 h-60 overflow-auto">
-              <div className="flex flex-nowrap">
-                <h2 className="flex-1 font-semibold mb-6">Transaksi Terbaru</h2>
-                <p className="flex-none"><a href="" className="text-sm font-bold text-indigo-500">Lihat detail</a></p>
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card header="Transaksi Terbaru" link="/">
               <ul className="divide-y divide-slate-200">
                 <li className="flex py-4 first:pt-0 last:pb-0">
                   <p className="text-blue-500 flex-1">PHILIPS</p>
@@ -79,12 +78,8 @@ export default function Home() {
                   </span>
                 </li>
               </ul>
-            </div>
-            <div className="w-full border rounded-lg p-6 h-60 overflow-auto">
-              <div className="flex flex-nowrap">
-                <h2 className="flex-1 font-semibold mb-6">Berita KAS</h2>
-                <p className="flex-none"><a href="" className="text-sm font-bold text-indigo-500">Lihat detail</a></p>
-              </div>
+            </Card>
+            <Card header="Berita KAS" link="/">
               <ul className="divide-y divide-slate-200">
                 <li className="flex py-4 first:pt-0 last:pb-0">
                   <div className="ml-3 overflow-hidden flex-1">
@@ -114,7 +109,7 @@ export default function Home() {
                   </div>
                 </li>
               </ul>
-            </div>
+            </Card>
           </div>
         </div>
       </Container>

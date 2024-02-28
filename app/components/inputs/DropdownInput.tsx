@@ -38,15 +38,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
           onFocus={handleShowDropdown}
         />
 
-        {/* <div className="lg:max-w-2xl max-w-sm">
-          <select className=" overflow-hidden w-full truncate" name="" id="" onChange={(e) => handleChangeProduct(e.target.value)}>
-            <option className="w-24 truncate" value='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quod, aspernatur.'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quod, aspernatur.</option>
-            <option className="w-24 truncate" value="barang 2">Barang 2</option>
-            <option className="w-24 truncate" value="barang 3">Barang 3</option>
-            <option className="w-24 truncate" value="barang 4">Barang 4</option>
-          </select>
-        </div> */}
-
         <div className={`relative ${showDropdown ? 'visible' : 'invisible'}`}>
           <div className="mx-auto max-h-48 p-4 w-full absolute max-w-screen-sm overflow-auto rounded-lg border bg-white shadow-sm lg:block">
             <div className="divide-y divide-slate-200">

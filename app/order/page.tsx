@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
 import DropdownInput from "../components/inputs/DropdownInput";
-import Input from "../components/inputs/Input";
+import Card from "../components/Card";
 import Select from "../components/inputs/Select";
 import { products } from "../components/products";
 import MultipleInput from "../components/inputs/MultipleInput";
+import HeaderPage from "../components/HeaderPage";
 
 const data = [
   {
@@ -29,7 +30,7 @@ const data = [
 
 const Home = () => {
 
-  const [brandProducts, setBrandProducts] = useState('');
+  const [brandProducts, setBrandProducts] = useState('philips');
   const [options, setOptions] = useState([]);
   const [produk, setProduk] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -49,7 +50,9 @@ const Home = () => {
 
   function handleChangeProduct(selectParam: string) {
     const product = products.filter(p => p.kode.includes(selectParam))
-    setProduk([...produk, product[0]])
+    if (produk.filter(item => item.kode === selectParam).length === 0) {
+      setProduk([...produk, product[0]])
+    }
     setShowDropdown(!showDropdown)
   }
 
@@ -57,14 +60,18 @@ const Home = () => {
     setShowDropdown(!showDropdown)
   }
 
+  function handleDelete(value: type) {
+    setProduk(produk.filter(item => item.kode !== value))
+  }
+
   return (
     <Container flex={false} wrap={false}>
-      <div className="text-2xl mb-2">Form Sales Order KAS</div>
-      <div className="mb-8 text-slate-400 font-light text-sm">Isi form sesuai dengan produk yang akan anda beli</div>
+      <HeaderPage title="Form Sales Order KAS">
+        Isi form sesuai dengan produk yang akan anda beli
+      </HeaderPage>
 
       <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-4">
-        <div className="w-full border rounded-lg p-5">
-          <h2 className="font-bold mb-4">Buat Order</h2>
+        <Card header="Buat Order">
           <div className="grid grid-cols-1 gap-4">
             <Select id="brand" label="Pilih Brand" handleChange={handleBrandChanges} >
               {data.map((item) => (
@@ -82,19 +89,18 @@ const Home = () => {
               placeholder="TL-D 36W"
             />
             {produk.map((item) => (
-              <MultipleInput key={item.kode} produk={item.produk} />
+              <MultipleInput key={item.kode} handleDelete={handleDelete} produk={item} />
             ))}
 
             <div className="mt-5 border-t p-4">
               <button className="float-right rounded-sm bg-indigo-500 p-2 text-white hover:bg-indigo-600">Tambah ke troli</button>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="w-full border rounded-lg p-5">
-          <h2 className="font-bold mb-4">Order paket bundling</h2>
-
-        </div>
+        <Card header="Order paket bundling">
+          <div>Hello</div>
+        </Card>
       </div>
 
       <div className="mt-4"></div>

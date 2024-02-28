@@ -1,3 +1,7 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { IconType } from "react-icons";
 
 interface MenuItemProps {
@@ -7,23 +11,24 @@ interface MenuItemProps {
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({ menuName, url, icon: Icon }) => {
+  const pathname = usePathname()
   return (
-    <a href={url}
-      className="
-      text-md 
-      font-medium
-      text-slate-900 
-      transition 
-      duration-100 
-      flex 
-      flex-nowrap
-      p-2
-      hover:text-indigo-500
-      "
+    <Link href={url}
+      className={`
+        text-md 
+        font-medium
+        transition 
+        duration-100 
+        flex 
+        flex-nowrap
+        p-2
+        hover:text-indigo-500
+        ${pathname === url ? 'text-indigo-500' : 'text-slate-900'}
+      `}
     >
       <Icon className=" my-auto" size={20} />
       {menuName}
-    </a>
+    </Link>
   );
 }
 

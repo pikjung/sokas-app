@@ -3,6 +3,66 @@
 export const products =
   [
     {
+      "kode": "PHILIPS PAKET1",
+      "produk": "PAKET LED BULB 1",
+      "brand": "philips"
+    },
+    {
+      "kode": "PHILIPS PAKET2",
+      "produk": "PAKET LED BULB 2",
+      "brand": "philips"
+    },
+    {
+      "kode": "PHILIPS PAKET3",
+      "produk": "PAKET LED BULB 3",
+      "brand": "philips"
+    },
+    {
+      "kode": "Panasonic PAKET1",
+      "produk": "PAKET WEJ5531 1",
+      "brand": "panasonic"
+    },
+    {
+      "kode": "Panasonic PAKET2",
+      "produk": "PAKET WEJ5531 2",
+      "brand": "panasonic"
+    },
+    {
+      "kode": "Panasonic PAKET3",
+      "produk": "PAKET wej5331 3",
+      "brand": "panasonic"
+    },
+    {
+      "kode": "Schneider PAKET1",
+      "produk": "PAKET DOMF01140 1",
+      "brand": "schneider"
+    },
+    {
+      "kode": "Schneider PAKET2",
+      "produk": "PAKET DOMF01155 2",
+      "brand": "schneider"
+    },
+    {
+      "kode": "Schneider PAKET3",
+      "produk": "PAKET DOMF01155 3",
+      "brand": "schneider"
+    },
+    {
+      "kode": "Supreme PAKET1",
+      "produk": "PAKET NYM 2X1.5 1",
+      "brand": "supreme"
+    },
+    {
+      "kode": "Supreme PAKET2",
+      "produk": "PAKET NYM 2X1.5 2",
+      "brand": "supreme"
+    },
+    {
+      "kode": "Supreme PAKET3",
+      "produk": "PAKET NYM 2X1.5 3",
+      "brand": "supreme"
+    },
+    {
       "kode": "AA0101000",
       "produk": "TL-D 18W\/33",
       "brand": "philips"
