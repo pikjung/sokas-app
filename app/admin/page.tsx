@@ -5,6 +5,9 @@ import Content from "./components/Content"
 import Navbar from "./components/Navbar"
 import { useState } from "react"
 import { FaArrowUp } from "react-icons/fa"
+import Container from "./components/Container"
+import Action from "./components/Action"
+import Button from "./components/Button"
 
 export default function Home() {
 
@@ -23,7 +26,7 @@ export default function Home() {
   }
 
   const filter = (
-    <div className="left-0 flex justify-end gap-2">
+    <Action>
       <input
         type="date"
         className="p-2 border border-slate-400 rounded-xl"
@@ -37,18 +40,12 @@ export default function Home() {
         onChange={(e) => changeDate(1, e.target.value)}
         min={tanggal[0]}
       />
-      <button
-        className="rounded-xl gap-2 my-auto flex bg-indigo-600 p-2 text-white hover:bg-indigo-700"
-        onClick={handleFilter}
-      >
-        <IoFilter size={20} />
-        Terapkan
-      </button>
-    </div>
+      <Button buttonHandler={handleFilter} name="Terapkan" icon={IoFilter} />
+    </Action>
   )
 
   return (
-    <main className="flex w-full h-full shadow-lg rounded-3xl">
+    <Container>
       <Navbar />
       <Content header="Dashboard" action={filter} desc="Lihat performa aplikasimu disini!">
         <div className="mt-8 border border-slate-300 rounded-xl w-3/6 bg-white p-4 flex-col">
@@ -72,6 +69,6 @@ export default function Home() {
           </div>
         </div>
       </Content>
-    </main>
+    </Container>
   )
 }
