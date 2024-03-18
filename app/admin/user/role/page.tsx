@@ -14,44 +14,68 @@ import Table from "../../components/Table";
 import { useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { nanoid } from "nanoid";
-import apiUrl from "../../../config"
+import apiUrl from "../../../config";
 import { FaRegEdit } from "react-icons/fa";
 
-interface FormData {
-  name: string
-}
-
 export default function Home() {
-  const [formData, setFormData] = useState<FormData>({
-    name: ""
+  const [formData, setFormData] = useState({
+    name: "",
   });
+  const [formSubmit, setFormSubmit] = useState("create");
+  const [data, setData] = useState(null);
+  const [header, setHeader] = useState("Tambah Role");
 
-  const [formSubmit, setFormSubmit] = useState({
-
-  })
-
-  const [data, setData] = useState(null)
-
-  const [header, setHeader] = useState("Tambah Akun");
+  const handleChange = (event: any) => {
+    setFormData({
+      name: event.target.value,
+    });
+  };
 
   const buttonHandler = () => {
     setFormData({
-      name: ""
+      name: "",
     });
+    setFormSubmit("create");
     const formModal = document.getElementById("formModal");
-    setHeader("Tambah Akun");
+    setHeader("Tambah Role");
     formModal.showModal();
-    console.log(nanoid());
   };
 
-  const formHandler = () => { };
+  const formHandler = async (event: any) => {
+    event.preventDefault();
+    if (formSubmit === "create") {
+      try {
+        const response = await fetch(`${apiUrl}/admin/roles`, {
+          method: "POST",
+          body: JSON.stringify({
+            name: formData.name,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit form");
+        }
+
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        throw error;
+      }
+    } else {
+    }
+  };
 
   const editHandler = () => {
     setFormData({
-      name: "test"
+      name: "test",
     });
+    setFormSubmit("update");
     const formModal = document.getElementById("formModal");
-    setHeader("Edit Akun");
+    setHeader("Edit Role");
     formModal.showModal();
   };
 
@@ -60,21 +84,21 @@ export default function Home() {
     deleteModal.showModal();
   };
 
-  const tableHeader = ['Nama']
+  const tableHeader = ["Nama"];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${apiUrl}/admin/roles`);
         if (!response.ok) {
-          throw new Error('Failed to fetch data')
+          throw new Error("Failed to fetch data");
         }
         const resposeData = await response.json();
-        setData(resposeData)
+        setData(resposeData);
       } catch (err) {
         console.log(err);
       }
-    }
+    };
 
     fetchData();
   }, []);
@@ -100,35 +124,42 @@ export default function Home() {
           deleteHandler={deleteHandler}
           header={tableHeader}
         >
-          {data && data.map(item => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>
-                <div className="flex gap-2">
-                  <button className="border-0" onClick={() => editHandler()}>
-                    <FaRegEdit size={20} />
-                  </button>
-                  <button className="border-0" onClick={() => deleteHandler()}>
-                    <GoTrash size={20} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+          {data &&
+            data.map((item: any) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>
+                  <div className="flex gap-2">
+                    <button className="border-0" onClick={() => editHandler()}>
+                      <FaRegEdit size={20} />
+                    </button>
+                    <button
+                      className="border-0"
+                      onClick={() => deleteHandler()}
+                    >
+                      <GoTrash size={20} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
         </Table>
       </Content>
       <Modal header={header} idName="formModal">
-        <form>
-          <TextInput
-            label="Role Name"
-            icon={MdLockOutline}
-            placeholder="admin"
-            value={formData.name}
-          />
+        <form onSubmit={formHandler}>
+          <TextInput label="Role Name" icon={MdLockOutline}>
+            <input
+              name="name"
+              type="text"
+              className="grow"
+              placeholder="Admin"
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </TextInput>
           <button
             type="submit"
             className="rounded-xl float-right mt-6 gap-2 px-4 my-auto flex bg-indigo-600 p-2 text-white hover:bg-indigo-700"
-            onClick={formHandler}
           >
             Submit
             <LiaPaperPlane className="my-auto" size={20} />

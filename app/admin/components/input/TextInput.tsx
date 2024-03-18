@@ -1,19 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import { IconType } from "react-icons";
 
 interface TextInputProps {
   label: string;
   icon: IconType;
-  placeholder: string;
-  password?: boolean;
-  value?: string;
+  children: React.ReactNode;
 }
 
 const TextInput: React.FC<TextInputProps> = ({
   label,
   icon: Icon,
-  placeholder,
-  password,
-  value,
+  children,
 }) => {
   return (
     <label className="form-control w-full">
@@ -24,16 +23,7 @@ const TextInput: React.FC<TextInputProps> = ({
       </div>
       <label className="input input-bordered flex items-center gap-2">
         <Icon />
-        {password ? (
-          <input type="password" className="grow" placeholder={placeholder} />
-        ) : (
-          <input
-            type="text"
-            className="grow"
-            placeholder={placeholder}
-            value={value}
-          />
-        )}
+        {children}
       </label>
     </label>
   );
