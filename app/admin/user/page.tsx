@@ -17,14 +17,26 @@ import Table from "../components/Table";
 import { useState } from "react";
 import { GoTrash } from "react-icons/go";
 
+interface FormData {
+  fullName: string,
+  email: string,
+  userName: string,
+  password: string,
+  role: number,
+}
+
 export default function Home() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
     userName: "",
     password: "",
-    role: "",
+    role: 1,
   });
+
+  const [formSubmit, setFormSubmit] = useState({
+
+  })
 
   const [header, setHeader] = useState("Tambah Akun");
 
@@ -34,14 +46,14 @@ export default function Home() {
       email: "",
       userName: "",
       password: "",
-      role: "",
+      role: 1,
     });
     const formModal = document.getElementById("formModal");
     setHeader("Tambah Akun");
     formModal.showModal();
   };
 
-  const formHandler = () => {};
+  const formHandler = () => { };
 
   const button = (
     <Action>
@@ -60,7 +72,7 @@ export default function Home() {
       email: "fikri@gmail.com",
       userName: "Fikri123",
       password: "",
-      role: "",
+      role: 1,
     });
     const formModal = document.getElementById("formModal");
     setHeader("Edit Akun");
@@ -81,8 +93,8 @@ export default function Home() {
           deleteHandler={deleteHandler}
         />
       </Content>
-      <Modal header={header} idName="formModal" submit={true}>
-        <form action="">
+      <Modal header={header} idName="formModal">
+        <form>
           <TextInput
             label="Full Name"
             icon={LiaUserTagSolid}
