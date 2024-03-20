@@ -2,14 +2,10 @@ interface TableProps {
   header: string[];
   children: React.ReactNode
   action: boolean;
-  editHandler: () => void;
-  deleteHandler: () => void;
 }
 
 const Table: React.FC<TableProps> = ({
   action,
-  editHandler,
-  deleteHandler,
   header,
   children
 }) => {

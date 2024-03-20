@@ -1,19 +1,25 @@
 "use client";
 
+//components
 import Action from "../components/Action";
 import Container from "../components/Container";
 import Content from "../components/Content";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
-import { IoCreateOutline } from "react-icons/io5";
 import Modal from "../components/Modal";
-import { MdOutlineAlternateEmail } from "react-icons/md";
 import TextInput from "../components/input/TextInput";
 import SelectInput from "../components/input/SelectInput";
+import Table from "../components/Table";
+
+//handler
+import { buttonHandler, handleChange, formHandler } from "../handler/userHandler"
+
+//icons
+import { IoCreateOutline } from "react-icons/io5";
+import { MdOutlineAlternateEmail } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
 import { LiaPaperPlane, LiaUserTagSolid } from "react-icons/lia";
 import { RiLockPasswordLine } from "react-icons/ri";
-import Table from "../components/Table";
 import { useState } from "react";
 import { GoTrash } from "react-icons/go";
 
@@ -33,55 +39,20 @@ export default function Home() {
     password: "",
     role: 1,
   });
-
-  const [formSubmit, setFormSubmit] = useState({
-
-  })
-
   const [header, setHeader] = useState("Tambah Akun");
-
-  const buttonHandler = () => {
-    setFormData({
-      fullName: "",
-      email: "",
-      userName: "",
-      password: "",
-      role: 1,
-    });
-    const formModal = document.getElementById("formModal");
-    setHeader("Tambah Akun");
-    formModal.showModal();
-  };
-
-  const formHandler = () => { };
+  const [id, setId] = useState("")
+  const tableHeader = ['Nama', 'Email', 'Username', 'Role']
 
   const button = (
     <Action>
       <Button
         name="Tambah Akun"
-        buttonHandler={buttonHandler}
+        buttonHandler={() => buttonHandler(setFormData, setHeader)}
         icon={IoCreateOutline}
         type="primary"
       />
     </Action>
   );
-
-  const editHandler = () => {
-    setFormData({
-      fullName: "Fikri",
-      email: "fikri@gmail.com",
-      userName: "Fikri123",
-      password: "",
-      role: 1,
-    });
-    const formModal = document.getElementById("formModal");
-    setHeader("Edit Akun");
-    formModal.showModal();
-  };
-  const deleteHandler = () => {
-    const deleteModal = document.getElementById("deleteModal");
-    deleteModal.showModal();
-  };
 
   return (
     <Container>
@@ -89,36 +60,64 @@ export default function Home() {
       <Content header="Account" desc="Kelola akun disini!" action={button}>
         <Table
           action={true}
-          editHandler={editHandler}
-          deleteHandler={deleteHandler}
-        />
+          header={tableHeader}
+        ></Table>
       </Content>
       <Modal header={header} idName="formModal">
         <form>
           <TextInput
             label="Full Name"
             icon={LiaUserTagSolid}
-            placeholder="Jhon Doe"
-            value={formData.fullName}
-          />
+          >
+            <input
+              name="name"
+              type="text"
+              className="grow"
+              placeholder="Admin"
+              value={formData.name}
+              onChange={(event) => }
+            />
+          </TextInput>
           <TextInput
             label="Email"
             icon={MdOutlineAlternateEmail}
-            placeholder="blabla@gmail.com"
-            value={formData.email}
-          />
+          >
+            <input
+              name="name"
+              type="text"
+              className="grow"
+              placeholder="Admin"
+              value={formData.name}
+              onChange={(event) => handleChange(event, setFormData)}
+            />
+          </TextInput>
           <TextInput
             label="Username"
             icon={FaRegUser}
-            placeholder="jhondoe"
-            value={formData.userName}
-          />
+
+          >
+            <input
+              name="name"
+              type="text"
+              className="grow"
+              placeholder="Admin"
+              value={formData.name}
+              onChange={(event) => handleChange(event, setFormData)}
+            />
+          </TextInput>
           <TextInput
             label="Password"
-            password={true}
             icon={RiLockPasswordLine}
-            placeholder="password"
-          />
+          >
+            <input
+              name="name"
+              type="text"
+              className="grow"
+              placeholder="Admin"
+              value={formData.name}
+              onChange={(event) => handleChange(event, setFormData)}
+            />
+          </TextInput>
           <SelectInput label="Role" />
           <button
             type="submit"

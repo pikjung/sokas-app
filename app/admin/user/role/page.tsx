@@ -1,113 +1,49 @@
 "use client";
 
+// url config
+import apiUrl from "../../../config";
+
+// component
 import Action from "../../components/Action";
 import Container from "../../components/Container";
 import Content from "../../components/Content";
 import Navbar from "../../components/Navbar";
 import Button from "../../components/Button";
-import { IoCreateOutline } from "react-icons/io5";
-import Modal from "../../components/Modal";
-import { MdLockOutline, MdOutlineAlternateEmail } from "react-icons/md";
-import TextInput from "../../components/input/TextInput";
-import { LiaPaperPlane, LiaUserTagSolid } from "react-icons/lia";
 import Table from "../../components/Table";
+import Modal from "../../components/Modal";
+import TextInput from "../../components/input/TextInput";
+
+// handler
+import { handleChange, buttonHandler, fetchData, editHandler, deleteHandler, deleteRole, formHandler } from "../../handler/roleHandler";
+
+// icon
+import { IoCreateOutline } from "react-icons/io5";
+import { MdLockOutline } from "react-icons/md";
+import { LiaPaperPlane } from "react-icons/lia";
 import { useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
-import { nanoid } from "nanoid";
-import apiUrl from "../../../config";
 import { FaRegEdit } from "react-icons/fa";
 
 export default function Home() {
   const [formData, setFormData] = useState({
+    id: "",
     name: "",
   });
-  const [formSubmit, setFormSubmit] = useState("create");
+  const [formMethod, setFormMethod] = useState("create");
   const [data, setData] = useState(null);
   const [header, setHeader] = useState("Tambah Role");
-
-  const handleChange = (event: any) => {
-    setFormData({
-      name: event.target.value,
-    });
-  };
-
-  const buttonHandler = () => {
-    setFormData({
-      name: "",
-    });
-    setFormSubmit("create");
-    const formModal = document.getElementById("formModal");
-    setHeader("Tambah Role");
-    formModal.showModal();
-  };
-
-  const formHandler = async (event: any) => {
-    event.preventDefault();
-    if (formSubmit === "create") {
-      try {
-        const response = await fetch(`${apiUrl}/admin/roles`, {
-          method: "POST",
-          body: JSON.stringify({
-            name: formData.name,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to submit form");
-        }
-
-        const responseData = await response.json();
-        return responseData;
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        throw error;
-      }
-    } else {
-    }
-  };
-
-  const editHandler = () => {
-    setFormData({
-      name: "test",
-    });
-    setFormSubmit("update");
-    const formModal = document.getElementById("formModal");
-    setHeader("Edit Role");
-    formModal.showModal();
-  };
-
-  const deleteHandler = () => {
-    const deleteModal = document.getElementById("deleteModal");
-    deleteModal.showModal();
-  };
-
+  const [id, setId] = useState("");
   const tableHeader = ["Nama"];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/admin/roles`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const resposeData = await response.json();
-        setData(resposeData);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchData();
+    fetchData(setData);
   }, []);
 
   const button = (
     <Action>
       <Button
         name="Tambah Role"
-        buttonHandler={buttonHandler}
+        buttonHandler={() => buttonHandler(setFormData, setFormMethod, setHeader)}
         icon={IoCreateOutline}
         type="primary"
       />
@@ -120,8 +56,6 @@ export default function Home() {
       <Content header="Role" desc="Kelola Role disini!" action={button}>
         <Table
           action={true}
-          editHandler={editHandler}
-          deleteHandler={deleteHandler}
           header={tableHeader}
         >
           {data &&
@@ -130,12 +64,12 @@ export default function Home() {
                 <td>{item.name}</td>
                 <td>
                   <div className="flex gap-2">
-                    <button className="border-0" onClick={() => editHandler()}>
+                    <button className="border-0" onClick={() => editHandler(item, setFormData, setId, setFormMethod, setHeader)}>
                       <FaRegEdit size={20} />
                     </button>
                     <button
                       className="border-0"
-                      onClick={() => deleteHandler()}
+                      onClick={() => deleteHandler(item, setFormData, setId)}
                     >
                       <GoTrash size={20} />
                     </button>
@@ -144,9 +78,9 @@ export default function Home() {
               </tr>
             ))}
         </Table>
-      </Content>
+      </Content >
       <Modal header={header} idName="formModal">
-        <form onSubmit={formHandler}>
+        <form onSubmit={(e) => formHandler(e, formMethod, formData, id, setData)}>
           <TextInput label="Role Name" icon={MdLockOutline}>
             <input
               name="name"
@@ -154,7 +88,7 @@ export default function Home() {
               className="grow"
               placeholder="Admin"
               value={formData.name}
-              onChange={handleChange}
+              onChange={(event) => handleChange(event, setFormData)}
             />
           </TextInput>
           <button
@@ -173,8 +107,9 @@ export default function Home() {
           type="danger"
           name="Hapus"
           icon={GoTrash}
+          buttonHandler={() => deleteRole(id, setData)}
         ></Button>
       </Modal>
-    </Container>
+    </Container >
   );
 }
