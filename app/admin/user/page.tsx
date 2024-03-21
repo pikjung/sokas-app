@@ -12,7 +12,11 @@ import SelectInput from "../components/input/SelectInput";
 import Table from "../components/Table";
 
 //handler
-import { buttonHandler, handleChange, formHandler } from "../handler/userHandler"
+import {
+  buttonHandler,
+  handleChange,
+  formHandler,
+} from "../handler/userHandler";
 
 //icons
 import { IoCreateOutline } from "react-icons/io5";
@@ -24,11 +28,11 @@ import { useState } from "react";
 import { GoTrash } from "react-icons/go";
 
 interface FormData {
-  fullName: string,
-  email: string,
-  userName: string,
-  password: string,
-  role: number,
+  fullName: string;
+  email: string;
+  userName: string;
+  password: string;
+  role: number;
 }
 
 export default function Home() {
@@ -40,8 +44,8 @@ export default function Home() {
     role: 1,
   });
   const [header, setHeader] = useState("Tambah Akun");
-  const [id, setId] = useState("")
-  const tableHeader = ['Nama', 'Email', 'Username', 'Role']
+  const [id, setId] = useState("");
+  const tableHeader = ["Nama", "Email", "Username", "Role"];
 
   const button = (
     <Action>
@@ -58,63 +62,49 @@ export default function Home() {
     <Container>
       <Navbar />
       <Content header="Account" desc="Kelola akun disini!" action={button}>
-        <Table
-          action={true}
-          header={tableHeader}
-        ></Table>
+        <Table action={true} header={tableHeader}>
+          tr
+        </Table>
       </Content>
       <Modal header={header} idName="formModal">
         <form>
-          <TextInput
-            label="Full Name"
-            icon={LiaUserTagSolid}
-          >
+          <TextInput label="Full Name" icon={LiaUserTagSolid}>
             <input
               name="name"
               type="text"
               className="grow"
-              placeholder="Admin"
-              value={formData.name}
-              onChange={(event) => }
-            />
-          </TextInput>
-          <TextInput
-            label="Email"
-            icon={MdOutlineAlternateEmail}
-          >
-            <input
-              name="name"
-              type="text"
-              className="grow"
-              placeholder="Admin"
-              value={formData.name}
+              placeholder="jhon dhoe"
+              value={formData.fullName}
               onChange={(event) => handleChange(event, setFormData)}
             />
           </TextInput>
-          <TextInput
-            label="Username"
-            icon={FaRegUser}
-
-          >
+          <TextInput label="Email" icon={MdOutlineAlternateEmail}>
             <input
-              name="name"
-              type="text"
+              name="email"
+              type="email"
               className="grow"
-              placeholder="Admin"
-              value={formData.name}
+              placeholder="jhondoe@gmail.com"
+              value={formData.email}
               onChange={(event) => handleChange(event, setFormData)}
             />
           </TextInput>
-          <TextInput
-            label="Password"
-            icon={RiLockPasswordLine}
-          >
+          <TextInput label="Username" icon={FaRegUser}>
             <input
-              name="name"
+              name="username"
               type="text"
               className="grow"
               placeholder="Admin"
-              value={formData.name}
+              value={formData.userName}
+              onChange={(event) => handleChange(event, setFormData)}
+            />
+          </TextInput>
+          <TextInput label="Password" icon={RiLockPasswordLine}>
+            <input
+              name="password"
+              type="password"
+              className="grow"
+              placeholder="Admin"
+              value={formData.password}
               onChange={(event) => handleChange(event, setFormData)}
             />
           </TextInput>

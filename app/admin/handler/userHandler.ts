@@ -22,14 +22,19 @@ export const buttonHandler = (setFormData: any, setHeader: any) => {
     password: "",
     role: 1,
   });
-  const formModal = (<HTMLElement>document.getElementById("formModal"));
+  const formModal = <HTMLElement>document.getElementById("formModal");
   setHeader("Tambah Akun");
   formModal.showModal();
 };
 
-export const formHandler = () => { };
+export const formHandler = () => {};
 
-export const handleChange = () => { }
+export const handleChange = (event: any, setFormData: any) => {
+  setFormData({
+    id: "",
+    name: event.target.value,
+  });
+};
 
 export const editHandler = (setFormData: any, setHeader: any) => {
   setFormData({
@@ -39,13 +44,12 @@ export const editHandler = (setFormData: any, setHeader: any) => {
     password: "",
     role: 1,
   });
-  const formModal = (<HTMLElement>document.getElementById("formModal"));
+  const formModal = <HTMLElement>document.getElementById("formModal");
   setHeader("Edit Akun");
   formModal.showModal();
 };
 
 export const deleteHandler = () => {
-  const formModal = (<HTMLElement>document.getElementById("formModal"));
+  const formModal = <HTMLElement>document.getElementById("formModal");
   deleteModal.showModal();
 };
-
