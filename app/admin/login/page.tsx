@@ -1,26 +1,33 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
-import TextInput from "../components/input/TextInput"
-import { FaRegUser } from "react-icons/fa"
-import { RiLockPasswordFill } from "react-icons/ri"
-import { authHandler } from "../handler/authHandler"
-import { getToken } from "../utils/getToken"
-import { verifyToken } from "../utils/verifyToken"
+import { useState, useLayoutEffect } from "react";
+import TextInput from "../components/input/TextInput";
+import { FaRegUser } from "react-icons/fa";
+import { RiLockPasswordFill } from "react-icons/ri";
+import { authHandler } from "../handler/authHandler";
+import { useRouter } from "next/navigation";
+import { getToken } from "../utils/getToken";
 
 export default function Home() {
+  const router = useRouter();
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  useLayoutEffect(() => {
+    const token = getToken();
+    if (token) router.push("/admin");
+  }, [router]);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const formHandler = (e: React.FormEvent) => {
-    e.preventDefault()
-    const login = authHandler(username, password)
-
-  }
+    e.preventDefault();
+    authHandler(username, password);
+    const token = getToken();
+    if (token) router.push("/admin");
+    return null;
+  };
 
   return (
-
     <div className="flex justify-center items-center">
       <div className="flex w-full">
         <div className="w-1/2 bg-gradient-to-r from-indigo-600 to-indigo-400">
@@ -35,12 +42,11 @@ export default function Home() {
         <div className="w-1/2 flex h-screen px-16">
           <div className="w-full my-auto">
             <h2 className="text-2xl text-slate-500 font-semibold">Login</h2>
-            <p className="font-light text-slate-500 mb-4">Halo, selamat datang kembali!</p>
+            <p className="font-light text-slate-500 mb-4">
+              Halo, selamat datang kembali!
+            </p>
             <form onSubmit={formHandler}>
-              <TextInput
-                label="Username"
-                icon={FaRegUser}
-              >
+              <TextInput label="Username" icon={FaRegUser}>
                 <input
                   name="username"
                   type="text"
@@ -51,10 +57,7 @@ export default function Home() {
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </TextInput>
-              <TextInput
-                label="Password"
-                icon={RiLockPasswordFill}
-              >
+              <TextInput label="Password" icon={RiLockPasswordFill}>
                 <input
                   name="password"
                   type="password"
@@ -79,5 +82,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { getToken } from "./getToken";
 import apiUrl from "@/app/config";
 
@@ -8,11 +7,11 @@ export const verifyToken = async () => {
     const response = await fetch(`${apiUrl}/admin/verify-token`, {
       method: "GET",
       headers: {
-        'authorization': `Bearer ${token}`
-      }
-    })
-    return response ? true : false;
+        authorization: `Bearer ${token}`,
+      },
+    });
+    return response.ok ? true : false;
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
