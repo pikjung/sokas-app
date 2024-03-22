@@ -14,6 +14,19 @@ export const fetchData = async (setData: any) => {
   }
 };
 
+export const rolefetchData = async (setRoleData: any) => {
+  try {
+    const response = await fetch(`${apiUrl}/admin/roles`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const resposeData = await response.json();
+    setRoleData(resposeData);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const buttonHandler = (setFormData: any, setHeader: any) => {
   setFormData({
     fullName: "",
@@ -27,7 +40,7 @@ export const buttonHandler = (setFormData: any, setHeader: any) => {
   formModal.showModal();
 };
 
-export const formHandler = () => {};
+export const formHandler = () => { };
 
 export const handleChange = (event: any, setFormData: any) => {
   setFormData({

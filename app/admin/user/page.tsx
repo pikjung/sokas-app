@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 //components
 import Action from "../components/Action";
 import Container from "../components/Container";
@@ -16,6 +18,8 @@ import {
   buttonHandler,
   handleChange,
   formHandler,
+  rolefetchData,
+  fetchData
 } from "../handler/userHandler";
 
 //icons
@@ -35,6 +39,11 @@ interface FormData {
   role: number;
 }
 
+interface RoleData {
+  id: string;
+  name: string;
+}
+
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
@@ -43,9 +52,18 @@ export default function Home() {
     password: "",
     role: 1,
   });
+  const [roleData, setRoleData] = useState<RoleData>({
+    id: "",
+    name: ""
+  })
   const [header, setHeader] = useState("Tambah Akun");
   const [id, setId] = useState("");
   const tableHeader = ["Nama", "Email", "Username", "Role"];
+
+  useEffect(() => {
+    fetchData(setFormData);
+    rolefetchData(setRoleData);
+  }, []);
 
   const button = (
     <Action>
