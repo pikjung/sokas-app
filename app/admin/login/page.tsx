@@ -1,30 +1,49 @@
 "use client";
 
-import { useState, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import TextInput from "../components/input/TextInput";
 import { FaRegUser } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { authHandler } from "../handler/authHandler";
+import { authHandler, verifyToken } from "../handler/authHandler";
 import { useRouter } from "next/navigation";
-import { getToken } from "../utils/getToken";
+import { getToken, setToken, deleteToken } from "../utils/getToken";
 
 export default function Home() {
   const router = useRouter();
+  const [authenticated, setAuthenticated] = useState(false);
 
-  useLayoutEffect(() => {
-    const token = getToken();
-    if (token) router.push("/admin");
-  }, [router]);
+  useEffect(() => {
+    const token = getToken(); // Ganti dengan cara yang sesuai untuk mendapatkan token
+    if (token) {
+      verifyToken(token)
+        .then((isValid) => {
+          setAuthenticated(isValid);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          setAuthenticated(false);
+        });
+    } else {
+      setAuthenticated(false);
+    }
+  }, []);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const formHandler = (e: React.FormEvent) => {
+  const formHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    authHandler(username, password);
-    const token = getToken();
-    if (token) router.push("/admin");
-    return null;
+    try {
+      const response = await authHandler(username, password);
+      if (response.status === "success") {
+        router.push("/admin");
+        setToken(response.data);
+      } else {
+        alert("Username dan password salah");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (

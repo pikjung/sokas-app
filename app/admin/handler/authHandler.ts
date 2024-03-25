@@ -1,17 +1,25 @@
 import apiUrl from "@/app/config";
 import formSubmit from "../utils/formSubmit";
-import { setToken } from "../utils/getToken";
 
-export const authHandler = async (username: string, password: string) => {
+export const authHandler = (username: string, password: string) => {
+  const data = JSON.stringify({
+    username: username,
+    password: password,
+  });
+  const response = formSubmit(`${apiUrl}/admin/login`, "POST", data);
+  return response;
+};
+
+export const verifyToken = (token: string): Promise<boolean> => {
   try {
-    const data = JSON.stringify({
-      username: username,
-      password: password,
+    const response = fetch(`${apiUrl}/admin/verifiy-token`, {
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + token,
+      },
     });
-    const response = await formSubmit(`${apiUrl}/admin/login`, "POST", data);
-    setToken(response.data);
-    return response;
+    return response.ok;
   } catch (error) {
-    return error;
+    return false;
   }
 };
