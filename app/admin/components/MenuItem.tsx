@@ -28,11 +28,10 @@ const MenuItem: React.FC<MenuItemProps> = ({ url, icon: Icon, name, desc }) => {
           last:mt-14
           w-16
           p-4 
-          ${
-            path === url
-              ? "bg-indigo-600 text-slate-200"
-              : "border text-gray-700 hover:text-indigo-600 hover:border-indigo-500"
-          } 
+          ${path === url
+          ? "bg-indigo-600 text-slate-200"
+          : "border text-gray-700 hover:text-indigo-600 hover:border-indigo-500"
+        } 
           rounded-2xl 
           mb-4
         `}

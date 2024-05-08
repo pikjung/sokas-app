@@ -23,8 +23,21 @@ import { LiaPaperPlane } from "react-icons/lia";
 import { useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { FaRegEdit } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+
+import { verifyToken } from "../../handler/authHandler";
+import { getToken } from "../../utils/getToken";
+import Toast from "../../components/Toast";
 
 export default function Home() {
+  const router = useRouter()
+
+  const [toast, setToast] = useState(false)
+  const [alert, setAlert] = useState({
+    status: "",
+    message: ""
+  })
+
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -35,8 +48,108 @@ export default function Home() {
   const [id, setId] = useState("");
   const tableHeader = ["Nama"];
 
+  const authenticate = async () => {
+    if (!getToken()) {
+      router.push('/admin/login');
+      return null
+    }
+
+    const authorization = await verifyToken(getToken());
+
+    if (authorization.success === false) {
+      setAlert({
+        status: "warning",
+        message: "You are not authorized"
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      router.push('/admin/login');
+    }
+
+  };
+
+  //Ambil data
+  const getData = async () => {
+    const dataFetch: any = await fetchData();
+    if (dataFetch.success) {
+      setData(dataFetch.data)
+    }
+
+    if (!dataFetch.success) {
+      setAlert({
+        status: "error",
+        message: dataFetch.data.error
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      authenticate()
+    }
+  }
+
+  //input dan update data
+  const postData = async (e: any) => {
+    const dataform: any = await formHandler(e, formMethod, formData, id)
+    // console.log(dataform)
+    if (dataform.success === true) {
+      setAlert({
+        status: "success",
+        message: dataform.data.message
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      getData()
+    }
+
+    if (dataform.success === false) {
+      setAlert({
+        status: "error",
+        message: dataform.data.error
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      authenticate()
+    }
+  }
+
+  //Hapus data
+  const deleteData = async () => {
+    const dataform: any = await deleteRole(id)
+    if (dataform.success === true) {
+      setAlert({
+        status: "success",
+        message: dataform.data.message
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      getData()
+    }
+
+    if (!dataform.success) {
+      setAlert({
+        status: "error",
+        message: dataform.data.error
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      authenticate()
+    }
+  }
+
   useEffect(() => {
-    fetchData(setData);
+    authenticate();
+    getData()
   }, []);
 
   const button = (
@@ -52,6 +165,9 @@ export default function Home() {
 
   return (
     <Container>
+      {toast && (
+        <Toast status={alert.status} message={alert.message} />
+      )}
       <Navbar />
       <Content header="Role" desc="Kelola Role disini!" action={button}>
         <Table
@@ -80,7 +196,7 @@ export default function Home() {
         </Table>
       </Content >
       <Modal header={header} idName="formModal">
-        <form onSubmit={(e) => formHandler(e, formMethod, formData, id, setData)}>
+        <form onSubmit={(e) => postData(e)}>
           <TextInput label="Role Name" icon={MdLockOutline}>
             <input
               name="name"
@@ -107,7 +223,7 @@ export default function Home() {
           type="danger"
           name="Hapus"
           icon={GoTrash}
-          buttonHandler={() => deleteRole(id, setData)}
+          buttonHandler={() => deleteData()}
         ></Button>
       </Modal>
     </Container >

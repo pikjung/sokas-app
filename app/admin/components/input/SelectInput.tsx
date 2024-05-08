@@ -2,10 +2,22 @@ import { IconType } from "react-icons";
 
 interface SelectInputProps {
   label: string;
-  data?: [];
+  data: [];
+  value: string;
+  handleChange: () => void;
+  name: string;
+  required?: boolean;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label }) => {
+const SelectInput: React.FC<SelectInputProps> = ({
+  label,
+  data,
+  value,
+  handleChange,
+  name,
+  required = false
+}) => {
+
   return (
     <label className="form-control w-full">
       <div className="label">
@@ -13,12 +25,13 @@ const SelectInput: React.FC<SelectInputProps> = ({ label }) => {
           {label}
         </span>
       </div>
-      <select className="select select-bordered">
-        <option>Star Wars</option>
-        <option>Harry Potter</option>
-        <option>Lord of the Rings</option>
-        <option>Planet of the Apes</option>
-        <option>Star Trek</option>
+      <select name={name} value={value} className="select select-bordered" onChange={(e) => handleChange(e)} required={`${required ? 'required' : ''}`}>
+        <option value="">--Pilih--</option>
+        {data &&
+          data.map((item: any) => (
+            <option key={item.id} value={item.id}>{item.name}</option>
+          ))
+        }
       </select>
     </label>
   );

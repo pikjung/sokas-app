@@ -4,12 +4,49 @@ import { IoFilter } from "react-icons/io5"
 import Content from "./components/Content"
 import Navbar from "./components/Navbar"
 import { useState } from "react"
-import { FaArrowUp } from "react-icons/fa"
 import Container from "./components/Container"
 import Action from "./components/Action"
 import Button from "./components/Button"
 
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { verifyToken } from './handler/authHandler'
+import { getToken } from './utils/getToken'
+import Toast from "./components/Toast"
+
 export default function Home() {
+
+  const router = useRouter();
+  const [toast, setToast] = useState(false)
+  const [alert, setAlert] = useState({
+    status: "",
+    message: ""
+  })
+
+  useEffect(() => {
+    const authenticate = async () => {
+      if (!getToken()) {
+        router.push('/admin/login');
+        return null
+      }
+      const authorization = await verifyToken(getToken());
+
+      if (authorization.success === false) {
+        setAlert({
+          status: "warning",
+          message: "You are not authorized"
+        })
+        setToast(true)
+        setTimeout(() => {
+          setToast(false)
+        }, 2000);
+        router.push('/admin/login');
+      }
+
+    };
+
+    authenticate();
+  }, [router]);
 
   const [tanggal, setTanggal] = useState([new Date().toISOString().split('T')[0], new Date().toISOString().split('T')[0]])
 
@@ -46,6 +83,9 @@ export default function Home() {
 
   return (
     <Container>
+      {toast && (
+        <Toast status={alert.status} message={alert.message} />
+      )}
       <Navbar />
       <Content header="Dashboard" action={filter} desc="Lihat performa aplikasimu disini!">
         <div className="mt-8 border border-slate-300 rounded-xl w-3/6 bg-white p-4 flex-col">

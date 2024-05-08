@@ -1,76 +1,60 @@
-"use client";
+'use client'
+
+import Container from "../../components/Container"
+import Navbar from "../../components/Navbar"
+import Content from "../../components/Content"
 
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { verifyToken } from '../handler/authHandler'
-import { getToken } from '../utils/getToken'
-import Toast from "../components/Toast"
+import { useEffect, useState } from 'react'
+import { verifyToken } from '../../handler/authHandler'
+import { getToken } from '../../utils/getToken'
+import Toast from "../../components/Toast"
+import Action from "../../components/Action"
+import Button from "../../components/Button"
+import { IoCreateOutline } from "react-icons/io5"
+import Modal from "../../components/Modal"
+import TextInput from "../../components/input/TextInput"
+import { LiaPaperPlane } from "react-icons/lia"
+import { GoTrash } from "react-icons/go"
+import { FaList, FaRegEdit, FaWpforms } from "react-icons/fa"
+import Table from "../../components/Table"
 
-//components
-import Action from "../components/Action";
-import Container from "../components/Container";
-import Content from "../components/Content";
-import Navbar from "../components/Navbar";
-import Button from "../components/Button";
-import Modal from "../components/Modal";
-import TextInput from "../components/input/TextInput";
-import SelectInput from "../components/input/SelectInput";
-import Table from "../components/Table";
-
-//handler
 import {
-  buttonHandler,
-  formHandler,
-  rolefetchData,
-  deleteHandler,
   editHandler,
+  formHandler,
+  buttonHandler,
+  deleteArea,
   fetchData,
-  deleteUser
-} from "../handler/userHandler";
-
-//icons
-import { IoCreateOutline } from "react-icons/io5";
-import { MdOutlineAlternateEmail } from "react-icons/md";
-import { FaRegEdit, FaRegUser } from "react-icons/fa";
-import { LiaPaperPlane, LiaUserTagSolid } from "react-icons/lia";
-import { RiLockPasswordLine } from "react-icons/ri";
-import { useState } from "react";
-import { GoTrash } from "react-icons/go";
-import Link from 'next/link';
-import { CiUser } from 'react-icons/ci';
+  deleteHandler
+} from '../../handler/brandHandler'
 
 interface FormData {
-  name: string;
-  email: string;
-  username: string;
-  password: string;
-  role: string;
+  name: string,
+  color: string,
+  value: string
 }
 
-
 export default function Home() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    username: "",
-    password: "",
-    role: "",
-  });
-  const [roleData, setRoleData] = useState([])
-  const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState()
-  const [header, setHeader] = useState("Tambah Akun");
-  const [id, setId] = useState("");
-  const tableHeader = ["Nama", "Email", "Username", "Role"];
-
+  const router = useRouter();
   const [toast, setToast] = useState(false)
   const [alert, setAlert] = useState({
     status: "",
     message: ""
   })
 
-  const router = useRouter()
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    color: "",
+    value: "",
+  })
 
+  const [formMethod, setFormMethod] = useState("create")
+  const [id, setId] = useState("")
+  const [header, setHeader] = useState("Tambah Brand")
+  const [data, setData] = useState([])
+  const tableHeader = ['Name', 'Color', 'Value']
+
+  //protect
   const authenticate = async () => {
     if (!getToken()) {
       router.push('/admin/login');
@@ -91,39 +75,15 @@ export default function Home() {
     }
   }
 
-  //Ambil data user
-  const getUserData = async () => {
-    const data: any = await fetchData();
-    if (data.success) {
-      setData(data.data)
+  const getBrandData = async () => {
+    const brandData: any = await fetchData();
+    if (brandData.success) {
+      setData(brandData.data);
     }
 
-    if (!data.success) {
-      setAlert({
-        status: "error",
-        message: data.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }
-
-  //ambil data role
-  const getRoleData = async () => {
-    const data: any = await rolefetchData();
-    if (data.success) {
-      setRoleData(data.data)
-    }
-
-    if (!data.success) {
-      setAlert({
-        status: "error",
-        message: data.data.error
-      })
-      setToast(true)
+    if (!brandData.success) {
+      setAlert({ status: 'error', message: brandData.data.error })
+      setToast(true);
       setTimeout(() => {
         setToast(false)
       }, 2000);
@@ -143,7 +103,7 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getUserData()
+      getBrandData()
     }
 
     if (dataform.success === false) {
@@ -161,7 +121,7 @@ export default function Home() {
 
   //Hapus data
   const deleteData = async () => {
-    const dataform: any = await deleteUser(id)
+    const dataform: any = await deleteArea(id)
     if (dataform.success === true) {
       setAlert({
         status: "success",
@@ -171,7 +131,7 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getUserData()
+      getBrandData()
     }
 
     if (!dataform.success) {
@@ -198,33 +158,49 @@ export default function Home() {
 
 
   useEffect(() => {
-    authenticate();
-    getUserData();
-    getRoleData();
-  }, []);
+    authenticate()
+    getBrandData()
+  }, [])
+
 
   const button = (
     <Action>
-      <Link
-        className='rounded-xl gap-2 my-auto flex px-4 p-2 text-white bg-indigo-600 hover:bg-indigo-700'
-        href={'/admin/user/role'}
-      >
-        <CiUser size={25} />
-        Tambah Role
-      </Link>
       <Button
-        name="Tambah Akun"
+        name="Tambah Brand"
         buttonHandler={() => buttonHandler(setFormData, setHeader, setFormMethod)}
         icon={IoCreateOutline}
         type="primary"
       />
     </Action>
-  );
+  )
 
+  useEffect(() => {
+    const authenticate = async () => {
+      const authorization = await verifyToken(getToken());
+      if (!getToken()) {
+        router.push('/admin/login');
+        return null
+      }
+      if (authorization.success === false) {
+        setAlert({
+          status: "warning",
+          message: "You are not authorized"
+        })
+        setToast(true)
+        setTimeout(() => {
+          setToast(false)
+        }, 2000);
+        router.push('/admin/login');
+      }
+
+    };
+
+    authenticate();
+  }, [router]);
   return (
     <Container>
       <Navbar />
-      <Content header="Account" desc="Kelola akun disini!" action={button}>
+      <Content header="Brand" desc="Kelola Brand disini!" action={button}>
         {toast && (
           <Toast status={alert.status} message={alert.message} />
         )}
@@ -233,9 +209,8 @@ export default function Home() {
             data.map((item: any) => (
               <tr key={item.id}>
                 <td>{item.name}</td>
-                <td>{item.email}</td>
-                <td>{item.username}</td>
-                <td>{item.Role?.name}</td>
+                <td>{item.color}</td>
+                <td>{item.value}</td>
                 <td>
                   <div className="flex gap-2">
                     <button className="border-0" onClick={() => editHandler(item, setFormData, setId, setFormMethod, setHeader)}>
@@ -255,47 +230,38 @@ export default function Home() {
       </Content>
       <Modal header={header} idName="formModal">
         <form onSubmit={(e) => postData(e)}>
-          <TextInput label="Full Name" icon={LiaUserTagSolid}>
+          <TextInput label="Nama Brand" icon={FaList}>
             <input
               name="name"
               type="text"
               className="grow"
-              placeholder="jhon dhoe"
+              placeholder="Philips"
               value={formData.name}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
-          <TextInput label="Email" icon={MdOutlineAlternateEmail}>
+
+          <TextInput label="Color" icon={FaWpforms}>
             <input
-              name="email"
-              type="email"
-              className="grow"
-              placeholder="jhondoe@gmail.com"
-              value={formData.email}
-              onChange={(event) => handleChange(event)}
-            />
-          </TextInput>
-          <TextInput label="Username" icon={FaRegUser}>
-            <input
-              name="username"
+              name="color"
               type="text"
               className="grow"
-              placeholder="Admin"
-              value={formData.username}
+              placeholder="blue-500"
+              value={formData.color}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
-          <TextInput label="Password" icon={RiLockPasswordLine}>
+
+          <TextInput label="Value" icon={FaWpforms}>
             <input
-              name="password"
-              type="password"
+              name="value"
+              type="text"
               className="grow"
-              placeholder="Admin"
-              value={formData.password}
+              placeholder="PAN"
+              value={formData.value}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
-          <SelectInput label="Role" name="role" data={roleData} handleChange={handleChange} value={formData.role} />
           <button
             type="submit"
             className="rounded-xl float-right mt-6 gap-2 px-4 my-auto flex bg-indigo-600 p-2 text-white hover:bg-indigo-700"
@@ -316,5 +282,5 @@ export default function Home() {
         ></Button>
       </Modal>
     </Container>
-  );
+  )
 }

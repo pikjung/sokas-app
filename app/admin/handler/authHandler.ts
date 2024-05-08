@@ -1,25 +1,38 @@
 import apiUrl from "@/app/config";
-import formSubmit from "../utils/formSubmit";
+import axios from "axios";
+import { deleteToken, setToken } from "../utils/getToken";
 
-export const authHandler = (username: string, password: string) => {
+
+export const authHandler = async (username: string, password: string) => {
   const data = JSON.stringify({
     username: username,
     password: password,
   });
-  const response = formSubmit(`${apiUrl}/admin/login`, "POST", data);
+  const response = await axios.post(`${apiUrl}/admin/login`, data)
+    .then((res) => {
+      setToken(res.data)
+    }).catch((error) => {
+
+    });
   return response;
 };
 
-export const verifyToken = (token: string): Promise<boolean> => {
+export const verifyToken = async (token: any) => {
   try {
-    const response = fetch(`${apiUrl}/admin/verifiy-token`, {
-      method: "POST",
+    const response = await axios.get(`${apiUrl}/admin/verify-token`, {
       headers: {
-        authorization: "Bearer " + token,
+        Authorization: "Bearer " + token,
       },
     });
-    return response.ok;
-  } catch (error) {
-    return false;
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    deleteToken()
+    return {
+      success: false,
+      error: error.response.data
+    };
   }
 };

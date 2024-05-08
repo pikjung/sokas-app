@@ -8,9 +8,9 @@ const Toast: React.FC<ToastProps> = ({
   message
 }) => {
   return (
-    <div className="toast toast-top toast-center">
+    <div className="toast toast-top toast-center z-[100]">
       <div className={`alert alert-${status}`}>
-        <span>{message}</span>
+        <span className={`${status === 'error' ? 'text-white' : 'text-slate-600'}`}>{message}</span>
       </div>
     </div>
   )
