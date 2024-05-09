@@ -1,18 +1,18 @@
 "use client";
 
-import Container from "../components/Container";
-import Navbar from "../components/Navbar";
-import Content from "../components/Content";
+import Container from "../../components/Container";
+import Navbar from "../../components/Navbar";
+import Content from "../../components/Content";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { verifyToken } from "../handler/authHandler";
-import { getToken } from "../utils/getToken";
-import Toast from "../components/Toast";
+import { verifyToken } from "../../handler/authHandler";
+import { getToken } from "../../utils/getToken";
+import Toast from "../../components/Toast";
 import Link from "next/link";
-import Action from "../components/Action";
+import Action from "../../components/Action";
 import { CiSearch } from "react-icons/ci";
-import Button from "../components/Button";
+import Button from "../../components/Button";
 import { IoCreateOutline } from "react-icons/io5";
 import { FaFileImport, FaList, FaMapMarked, FaRegEdit } from "react-icons/fa";
 
@@ -20,35 +20,35 @@ import {
   buttonHandler,
   buttonImportHandler,
   deleteHandler,
-  deleteStore,
+  deleteAddress,
   editHandler,
   fetchData,
   fetchSideData,
   formHandler,
-  uploadStore,
-} from "../handler/storeHandler";
-import Table from "../components/Table";
+  uploadAddress,
+} from "../../handler/addressHandler";
+import Table from "../../components/Table";
 import { GoTrash } from "react-icons/go";
-import Modal from "../components/Modal";
-import TextInput from "../components/input/TextInput";
+import Modal from "../../components/Modal";
+import TextInput from "../../components/input/TextInput";
 import { RiBox3Line } from "react-icons/ri";
-import SelectInput from "../components/input/SelectInput";
+import SelectInput from "../../components/input/SelectInput";
 import { LiaPaperPlane } from "react-icons/lia";
 
 interface FormData {
   name: string;
-  value: string;
-  brandId: string;
+  tr_id: string;
+  multi_id: string;
 }
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    value: "",
-    brandId: "",
+    tr_id: "",
+    multi_id: "",
   });
   const [id, setId] = useState("");
-  const [header, setHeader] = useState("Tambah Brand");
+  const [header, setHeader] = useState("Tambah Alamat");
   const [toast, setToast] = useState(false);
   const [alert, setAlert] = useState({
     status: "",
@@ -56,9 +56,9 @@ export default function Home() {
   });
   const [formMethod, setFormMethod] = useState("create");
   const [data, setData] = useState();
-  const [brandData, setBrandData] = useState([]);
+  const [area, setArea] = useState([]);
 
-  const tableHeader = ["Name", "Value", "Brand"];
+  const tableHeader = ["Name", "TR Area", "Multi Area"];
 
   const router = useRouter();
 
@@ -106,7 +106,7 @@ export default function Home() {
   const getSideData = async () => {
     const data: any = await fetchSideData();
     if (data.success) {
-      setBrandData(data.data);
+      setArea(data.data);
     }
 
     if (!data.success) {
@@ -152,7 +152,7 @@ export default function Home() {
 
   //Hapus data
   const deleteData = async () => {
-    const dataform: any = await deleteProduct(id);
+    const dataform: any = await deleteAddress(id);
     if (dataform.success === true) {
       setAlert({
         status: "success",
@@ -204,7 +204,7 @@ export default function Home() {
     if (selectedFile) {
       setLoading(true);
       try {
-        const fileUpload: any = await uploadProduct(selectedFile);
+        const fileUpload: any = await uploadAddress(selectedFile);
         if (fileUpload.success === true) {
           setAlert({
             status: "success",
@@ -241,15 +241,8 @@ export default function Home() {
 
   const button = (
     <Action>
-      <Link
-        className="rounded-xl gap-2 my-auto flex px-4 p-2 text-white bg-indigo-600 hover:bg-indigo-700"
-        href={"/admin/store/address"}
-      >
-        <FaMapMarked size={25} />
-        Tambah Alamat
-      </Link>
       <Button
-        name="Tambah Store"
+        name="Tambah Wilayah"
         buttonHandler={() =>
           buttonHandler(setFormData, setHeader, setFormMethod)
         }
@@ -257,7 +250,7 @@ export default function Home() {
         type="primary"
       />
       <Button
-        name="Import Store"
+        name="Import Wilayah"
         buttonHandler={() => buttonImportHandler()}
         icon={FaFileImport}
         type="primary"
@@ -290,11 +283,7 @@ export default function Home() {
   return (
     <Container>
       <Navbar />
-      <Content
-        header="Store"
-        desc="Kelola Toko Customer disini!"
-        action={button}
-      >
+      <Content header="Alamat" desc="Kelola Wilayah disini!" action={button}>
         {toast && <Toast status={alert.status} message={alert.message} />}
         {loading && (
           <div className="toast toast-top toast-center z-[100]">
@@ -308,8 +297,8 @@ export default function Home() {
             data.map((item: any) => (
               <tr key={item.id}>
                 <td>{item.name}</td>
-                <td>{item.value}</td>
-                <td>{item.Brand?.name}</td>
+                <td>{item.tr?.name}</td>
+                <td>{item.multi?.name}</td>
                 <td>
                   <div className="flex gap-2">
                     <button
@@ -340,32 +329,30 @@ export default function Home() {
       </Content>
       <Modal header={header} idName="formModal">
         <form onSubmit={(e) => postData(e)}>
-          <TextInput label="Nama Product" icon={RiBox3Line}>
+          <TextInput label="Nama Wilayah" icon={RiBox3Line}>
             <input
               name="name"
               type="text"
               className="grow"
-              placeholder="Simbat TMS"
+              placeholder="Cibinong"
               value={formData.name}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
-          <TextInput label="Value" icon={CiSearch}>
-            <input
-              name="value"
-              type="text"
-              className="grow"
-              placeholder="AD01000010"
-              value={formData.value}
-              onChange={(event) => handleChange(event)}
-            />
-          </TextInput>
           <SelectInput
-            label="Brand"
-            name="brandId"
-            data={brandData}
+            label="TR"
+            name="tr_id"
+            data={area}
             handleChange={handleChange}
-            value={formData.brandId}
+            value={formData.tr_id}
+            required={true}
+          />
+          <SelectInput
+            label="Multi"
+            name="multi_id"
+            data={area}
+            handleChange={handleChange}
+            value={formData.multi_id}
             required={true}
           />
           <button
@@ -388,7 +375,7 @@ export default function Home() {
         ></Button>
       </Modal>
       <Modal header="Import Data" idName="importModal">
-        <p className="mb-4">Import Modal dari xlsx</p>
+        <p className="mb-4">Import Alamat dari xlsx</p>
         <form onSubmit={(e) => handleImportSubmit(e)}>
           <input type="file" name="file" onChange={handleFileChange} />
           <button
