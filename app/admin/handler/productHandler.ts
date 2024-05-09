@@ -2,64 +2,67 @@ import apiUrl from "@/app/config";
 import axios from "axios";
 import { getToken } from "../utils/getToken";
 
-
 export const fetchData = async () => {
   try {
     const response = await axios.get(`${apiUrl}/admin/product`, {
       headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    })
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
     return {
       success: true,
-      data: response.data.data
-    }
+      data: response.data.data,
+    };
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       return {
         success: false,
-        data: error.response.data
-      }
+        data: error.response.data,
+      };
     } else {
-      console.error('Error', error)
+      console.error("Error", error);
     }
   }
-}
+};
 
 export const fetchSideData = async () => {
   try {
     const response = await axios.get(`${apiUrl}/admin/brand`, {
       headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    })
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
     return {
       success: true,
-      data: response.data.data
-    }
+      data: response.data.data,
+    };
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       return {
         success: false,
-        data: error.response.data
-      }
+        data: error.response.data,
+      };
     } else {
-      console.error('Error', error)
+      console.error("Error", error);
     }
   }
-}
+};
 
-export const buttonHandler = (setFormData: any, setHeader: any, setFormMethod: any) => {
+export const buttonHandler = (
+  setFormData: any,
+  setHeader: any,
+  setFormMethod: any
+) => {
   setFormData({
     name: "",
     value: "",
     brandId: "",
-  })
-  setFormMethod("create")
+  });
+  setFormMethod("create");
   const formModal = <HTMLElement>document.getElementById("formModal");
-  setHeader("Tambah Akun");;
+  setHeader("Tambah Akun");
   formModal.showModal();
-}
+};
 
 export const formHandler = async (
   e: any,
@@ -74,29 +77,29 @@ export const formHandler = async (
         name: formData.name,
         value: formData.value,
         brandId: formData.brandId,
-      }
-      const url = `${apiUrl}/admin/product`
+      };
+      const url = `${apiUrl}/admin/product`;
       const response = await axios.post(url, data, {
         headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
-      const formModal = <HTMLElement>document.getElementById("formModal")
-      formModal.close()
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      const formModal = <HTMLElement>document.getElementById("formModal");
+      formModal.close();
       return {
         success: true,
-        data: response.data
-      }
+        data: response.data,
+      };
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         // Jika itu error 401, ambil pesan error dari respons
         return {
           success: false,
-          data: error.response.data
-        }
+          data: error.response.data,
+        };
       } else {
         // Tangani kesalahan lainnya
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   }
@@ -107,33 +110,33 @@ export const formHandler = async (
         name: formData.name,
         value: formData.value,
         brandId: formData.brandId,
-      }
-      const url = `${apiUrl}/admin/product/${id}`
+      };
+      const url = `${apiUrl}/admin/product/${id}`;
       const response = await axios.put(url, data, {
         headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
-      const formModal = <HTMLElement>document.getElementById("formModal")
-      formModal.close()
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      const formModal = <HTMLElement>document.getElementById("formModal");
+      formModal.close();
       return {
         success: true,
-        data: response.data
-      }
+        data: response.data,
+      };
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         // Jika itu error 401, ambil pesan error dari respons
         return {
           success: false,
-          data: error.response.data
-        }
+          data: error.response.data,
+        };
       } else {
         // Tangani kesalahan lainnya
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   }
-}
+};
 
 export const editHandler = (
   item: any,
@@ -146,31 +149,31 @@ export const editHandler = (
     name: item.name,
     value: item.value,
     brandId: item.brandId,
-  })
-  setId(item.id)
-  setFormMethod("update")
+  });
+  setId(item.id);
+  setFormMethod("update");
   const formModal = <HTMLElement>document.getElementById("formModal");
   setHeader("Edit Akun");
   formModal.showModal();
-}
+};
 
 export const deleteHandler = (item: any, setFormData: any, setId: any) => {
   setFormData({
     id: item.id,
     name: item.name,
-  })
-  setId(item.id)
+  });
+  setId(item.id);
   const deleteModal = document.getElementById("deleteModal");
   deleteModal.showModal();
-}
+};
 
 export const deleteProduct = async (id: string) => {
   try {
     const url = `${apiUrl}/admin/product/${id}`;
     const response = await axios.delete(url, {
       headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
     const formModal = <HTMLElement>document.getElementById("deleteModal");
     formModal.close();
@@ -178,7 +181,7 @@ export const deleteProduct = async (id: string) => {
     fetchData();
     return {
       success: true,
-      data: response.data
+      data: response.data,
     };
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -186,11 +189,11 @@ export const deleteProduct = async (id: string) => {
       // console.error('Error:', error);
       return {
         success: false,
-        data: error.response.data
-      }
+        data: error.response.data,
+      };
     } else {
       // Tangani kesalahan lainnya
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   }
 };
@@ -198,27 +201,26 @@ export const deleteProduct = async (id: string) => {
 export const buttonImportHandler = () => {
   const importModal = document.getElementById("importModal");
   importModal.showModal();
-}
+};
 
 export const uploadProduct = async (file: File): Promise<any> => {
+  const formModal = <HTMLElement>document.getElementById("importModal");
+  formModal.close();
   try {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
     const url = `${apiUrl}/admin/product/upload`;
     const response = await axios.post(url, formData, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
-        headers: { 'Content-Type': 'multipart/form-data' }
-      }
+        headers: { "Content-Type": "multipart/form-data" },
+      },
     });
-
-    const formModal = <HTMLElement>document.getElementById("uploadModal");
-    formModal.close();
 
     fetchData();
     return {
       success: true,
-      data: response.data
+      data: response.data,
     };
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -226,11 +228,11 @@ export const uploadProduct = async (file: File): Promise<any> => {
       // console.error('Error:', error);
       return {
         success: false,
-        data: error.response.data
-      }
+        data: error.response.data,
+      };
     } else {
       // Tangani kesalahan lainnya
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   }
-}
+};

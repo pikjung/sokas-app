@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import Container from "../components/Container"
-import Navbar from "../components/Navbar"
-import Content from "../components/Content"
+import Container from "../components/Container";
+import Navbar from "../components/Navbar";
+import Content from "../components/Content";
 
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { verifyToken } from '../handler/authHandler'
-import { getToken } from '../utils/getToken'
-import Toast from "../components/Toast"
-import Link from "next/link"
-import Action from "../components/Action"
-import { CiSearch } from "react-icons/ci"
-import Button from "../components/Button"
-import { IoCreateOutline } from "react-icons/io5"
-import { FaFileImport, FaList, FaRegEdit } from "react-icons/fa"
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { verifyToken } from "../handler/authHandler";
+import { getToken } from "../utils/getToken";
+import Toast from "../components/Toast";
+import Link from "next/link";
+import Action from "../components/Action";
+import { CiSearch } from "react-icons/ci";
+import Button from "../components/Button";
+import { IoCreateOutline } from "react-icons/io5";
+import { FaFileImport, FaList, FaRegEdit } from "react-icons/fa";
 
 import {
   buttonHandler,
@@ -25,102 +25,102 @@ import {
   fetchData,
   fetchSideData,
   formHandler,
-  uploadProduct
-} from '../handler/productHandler'
-import Table from "../components/Table"
-import { GoTrash } from "react-icons/go"
-import Modal from "../components/Modal"
-import TextInput from "../components/input/TextInput"
-import { RiBox3Line } from "react-icons/ri"
-import SelectInput from "../components/input/SelectInput"
-import { LiaPaperPlane } from "react-icons/lia"
+  uploadProduct,
+} from "../handler/productHandler";
+import Table from "../components/Table";
+import { GoTrash } from "react-icons/go";
+import Modal from "../components/Modal";
+import TextInput from "../components/input/TextInput";
+import { RiBox3Line } from "react-icons/ri";
+import SelectInput from "../components/input/SelectInput";
+import { LiaPaperPlane } from "react-icons/lia";
 
 interface FormData {
-  name: string,
-  value: string,
-  brandId: string,
+  name: string;
+  value: string;
+  brandId: string;
 }
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     value: "",
-    brandId: ""
+    brandId: "",
   });
   const [id, setId] = useState("");
   const [header, setHeader] = useState("Tambah Brand");
-  const [toast, setToast] = useState(false)
+  const [toast, setToast] = useState(false);
   const [alert, setAlert] = useState({
     status: "",
-    message: ""
-  })
+    message: "",
+  });
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState()
-  const [brandData, setBrandData] = useState([])
+  const [data, setData] = useState();
+  const [brandData, setBrandData] = useState([]);
 
-  const tableHeader = ['Name', 'Value', 'Brand']
+  const tableHeader = ["Name", "Value", "Brand"];
 
-  const router = useRouter()
+  const router = useRouter();
 
   const authenticate = async () => {
     if (!getToken()) {
-      router.push('/admin/login');
-      return null
+      router.push("/admin/login");
+      return null;
     }
     const authorization = await verifyToken(getToken());
 
     if (authorization.success === false) {
       setAlert({
         status: "warning",
-        message: "You are not authorized"
-      })
-      setToast(true)
+        message: "You are not authorized",
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      router.push('/admin/login');
+      router.push("/admin/login");
     }
-  }
+  };
 
   //ambil data area
   const getProductData = async () => {
     const data: any = await fetchData();
     if (data.success) {
-      setData(data.data)
+      setData(data.data);
     }
 
     if (!data.success) {
       setAlert({
         status: "error",
-        message: data.data.error
-      })
-      setToast(true)
+        message: data.data.error,
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      authenticate()
+      authenticate();
     }
-  }
+  };
 
   //ambil data role
   const getSideData = async () => {
     const data: any = await fetchSideData();
     if (data.success) {
-      setBrandData(data.data)
+      setBrandData(data.data);
     }
 
     if (!data.success) {
       setAlert({
         status: "error",
-        message: data.data.error
-      })
-      setToast(true)
+        message: data.data.error,
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      authenticate()
+      authenticate();
     }
-  }
+  };
 
   //create dan update data user
   const postData = async (e: any) => {
@@ -128,67 +128,67 @@ export default function Home() {
     if (dataform.success === true) {
       setAlert({
         status: "success",
-        message: dataform.data.message
-      })
-      setToast(true)
+        message: dataform.data.message,
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      getProductData()
+      getProductData();
     }
 
     if (dataform.success === false) {
       setAlert({
         status: "error",
-        message: dataform.data.error
-      })
-      setToast(true)
+        message: dataform.data.error,
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      authenticate()
+      authenticate();
     }
-  }
+  };
 
   //Hapus data
   const deleteData = async () => {
-    const dataform: any = await deleteProduct(id)
+    const dataform: any = await deleteProduct(id);
     if (dataform.success === true) {
       setAlert({
         status: "success",
-        message: dataform.data.message
-      })
-      setToast(true)
+        message: dataform.data.message,
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      getProductData()
+      getProductData();
     }
 
     if (!dataform.success) {
       setAlert({
         status: "error",
-        message: dataform.data.error
-      })
-      setToast(true)
+        message: dataform.data.error,
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      authenticate()
+      authenticate();
     }
-  }
+  };
 
   //handle formData
   const handleChange = (event: any) => {
-    const { name, value } = event.target
-    setFormData(prevState => ({
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   //handle change file import
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -197,58 +197,62 @@ export default function Home() {
     }
   };
 
-  const handleImportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleImportSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
     if (selectedFile) {
-      setLoading(true)
+      setLoading(true);
       try {
         const fileUpload: any = await uploadProduct(selectedFile);
         if (fileUpload.success === true) {
           setAlert({
             status: "success",
-            message: fileUpload.data.message
-          })
-          setToast(true)
+            message: fileUpload.data.message,
+          });
+          setToast(true);
           setTimeout(() => {
-            setToast(false)
+            setToast(false);
           }, 2000);
-          getProductData()
+          getProductData();
         }
       } catch (error: any) {
         setAlert({
-          status: 'error',
-          message: error.message
-        })
-        setToast(true)
+          status: "error",
+          message: error.message,
+        });
+        setToast(true);
         setTimeout(() => {
-          setToast(false)
+          setToast(false);
         }, 2000);
-        authenticate()
+        authenticate();
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
     // console.log(selectedFile)
   };
 
   useEffect(() => {
-    authenticate()
-    getProductData()
-    getSideData()
-  }, [])
+    authenticate();
+    getProductData();
+    getSideData();
+  }, []);
 
   const button = (
     <Action>
       <Link
-        className='rounded-xl gap-2 my-auto flex px-4 p-2 text-white bg-indigo-600 hover:bg-indigo-700'
-        href={'/admin/product/brand'}
+        className="rounded-xl gap-2 my-auto flex px-4 p-2 text-white bg-indigo-600 hover:bg-indigo-700"
+        href={"/admin/product/brand"}
       >
         <FaList size={25} />
         Tambah Brand
       </Link>
       <Button
         name="Tambah Product"
-        buttonHandler={() => buttonHandler(setFormData, setHeader, setFormMethod)}
+        buttonHandler={() =>
+          buttonHandler(setFormData, setHeader, setFormMethod)
+        }
         icon={IoCreateOutline}
         type="primary"
       />
@@ -259,27 +263,26 @@ export default function Home() {
         type="primary"
       />
     </Action>
-  )
+  );
 
   useEffect(() => {
     const authenticate = async () => {
       const authorization = await verifyToken(getToken());
       if (!getToken()) {
-        router.push('/admin/login');
-        return null
+        router.push("/admin/login");
+        return null;
       }
       if (authorization.success === false) {
         setAlert({
           status: "warning",
-          message: "You are not authorized"
-        })
-        setToast(true)
+          message: "You are not authorized",
+        });
+        setToast(true);
         setTimeout(() => {
-          setToast(false)
+          setToast(false);
         }, 2000);
-        router.push('/admin/login');
+        router.push("/admin/login");
       }
-
     };
 
     authenticate();
@@ -288,9 +291,7 @@ export default function Home() {
     <Container>
       <Navbar />
       <Content header="Product" desc="Kelola Product disini!" action={button}>
-        {toast && (
-          <Toast status={alert.status} message={alert.message} />
-        )}
+        {toast && <Toast status={alert.status} message={alert.message} />}
         {loading && (
           <div className="toast toast-top toast-center z-[100]">
             <div className={`alert alert-secondary`}>
@@ -307,7 +308,18 @@ export default function Home() {
                 <td>{item.Brand?.name}</td>
                 <td>
                   <div className="flex gap-2">
-                    <button className="border-0" onClick={() => editHandler(item, setFormData, setId, setFormMethod, setHeader)}>
+                    <button
+                      className="border-0"
+                      onClick={() =>
+                        editHandler(
+                          item,
+                          setFormData,
+                          setId,
+                          setFormMethod,
+                          setHeader
+                        )
+                      }
+                    >
                       <FaRegEdit size={20} />
                     </button>
                     <button
@@ -344,7 +356,14 @@ export default function Home() {
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
-          <SelectInput label="Brand" name="brandId" data={brandData} handleChange={handleChange} value={formData.brandId} required={true} />
+          <SelectInput
+            label="Brand"
+            name="brandId"
+            data={brandData}
+            handleChange={handleChange}
+            value={formData.brandId}
+            required={true}
+          />
           <button
             type="submit"
             className="rounded-xl float-right mt-6 gap-2 px-4 my-auto flex bg-indigo-600 p-2 text-white hover:bg-indigo-700"
@@ -367,11 +386,7 @@ export default function Home() {
       <Modal header="Import Data" idName="importModal">
         <p className="mb-4">Import Modal dari xlsx</p>
         <form onSubmit={(e) => handleImportSubmit(e)}>
-          <input
-            type="file"
-            name="file"
-            onChange={handleFileChange}
-          />
+          <input type="file" name="file" onChange={handleFileChange} />
           <button
             type="submit"
             className="rounded-xl float-right mt-6 gap-2 px-4 my-auto flex bg-indigo-600 p-2 text-white hover:bg-indigo-700"
@@ -382,5 +397,5 @@ export default function Home() {
         </form>
       </Modal>
     </Container>
-  )
+  );
 }
