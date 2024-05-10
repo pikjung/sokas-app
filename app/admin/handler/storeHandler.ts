@@ -55,8 +55,13 @@ export const buttonHandler = (
 ) => {
   setFormData({
     name: "",
-    value: "",
-    brandId: "",
+    lat: "",
+    long: "",
+    kode: "",
+    password: "",
+    top: 0,
+    addressId: "",
+    full_address: "",
   });
   setFormMethod("create");
   const formModal = <HTMLElement>document.getElementById("formModal");
@@ -75,8 +80,13 @@ export const formHandler = async (
     try {
       const data = {
         name: formData.name,
-        value: formData.value,
-        brandId: formData.brandId,
+        lat: formData.lat,
+        long: formData.long,
+        kode: formData.kode,
+        password: formData.password,
+        top: formData.top,
+        addressId: formData.addressId,
+        full_address: formData.full_address,
       };
       const url = `${apiUrl}/admin/store`;
       const response = await axios.post(url, data, {
@@ -108,8 +118,13 @@ export const formHandler = async (
     try {
       const data = {
         name: formData.name,
-        value: formData.value,
-        brandId: formData.brandId,
+        lat: formData.lat,
+        long: formData.long,
+        kode: formData.kode,
+        password: formData.password,
+        top: formData.top,
+        addressId: formData.addressId,
+        full_address: formData.full_address,
       };
       const url = `${apiUrl}/admin/store/${id}`;
       const response = await axios.put(url, data, {
@@ -147,8 +162,13 @@ export const editHandler = (
 ) => {
   setFormData({
     name: item.name,
-    value: item.value,
-    brandId: item.brandId,
+    lat: item.latitude,
+    long: item.longitude,
+    kode: item.kode,
+    password: item.password,
+    top: item.term_of_payment,
+    addressId: item.addressId,
+    full_address: item.full_address,
   });
   setId(item.id);
   setFormMethod("update");

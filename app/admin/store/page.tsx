@@ -11,7 +11,7 @@ import { getToken } from "../utils/getToken";
 import Toast from "../components/Toast";
 import Link from "next/link";
 import Action from "../components/Action";
-import { CiSearch } from "react-icons/ci";
+import { CiCalendarDate, CiSearch } from "react-icons/ci";
 import Button from "../components/Button";
 import { IoCreateOutline } from "react-icons/io5";
 import { FaFileImport, FaList, FaMapMarked, FaRegEdit } from "react-icons/fa";
@@ -34,18 +34,31 @@ import TextInput from "../components/input/TextInput";
 import { RiBox3Line } from "react-icons/ri";
 import SelectInput from "../components/input/SelectInput";
 import { LiaPaperPlane } from "react-icons/lia";
+import { TbMapSearch, TbWorldLatitude, TbWorldLongitude } from "react-icons/tb";
+import { BiBarcode } from "react-icons/bi";
+import { CgPassword } from "react-icons/cg";
 
 interface FormData {
   name: string;
-  value: string;
-  brandId: string;
+  lat: string;
+  long: string;
+  kode: string;
+  password: string;
+  top: string;
+  addressId: string;
+  full_address: string;
 }
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    value: "",
-    brandId: "",
+    lat: "",
+    long: "",
+    kode: "",
+    password: "",
+    top: "",
+    addressId: "",
+    full_address: "",
   });
   const [id, setId] = useState("");
   const [header, setHeader] = useState("Tambah Brand");
@@ -56,7 +69,7 @@ export default function Home() {
   });
   const [formMethod, setFormMethod] = useState("create");
   const [data, setData] = useState();
-  const [brandData, setBrandData] = useState([]);
+  const [addressData, setAddressData] = useState([]);
 
   const tableHeader = ["Name", "Value", "Brand"];
 
@@ -106,7 +119,7 @@ export default function Home() {
   const getSideData = async () => {
     const data: any = await fetchSideData();
     if (data.success) {
-      setBrandData(data.data);
+      setAddressData(data.data);
     }
 
     if (!data.success) {
@@ -152,7 +165,7 @@ export default function Home() {
 
   //Hapus data
   const deleteData = async () => {
-    const dataform: any = await deleteProduct(id);
+    const dataform: any = await deleteStore(id);
     if (dataform.success === true) {
       setAlert({
         status: "success",
@@ -204,7 +217,7 @@ export default function Home() {
     if (selectedFile) {
       setLoading(true);
       try {
-        const fileUpload: any = await uploadProduct(selectedFile);
+        const fileUpload: any = await uploadStore(selectedFile);
         if (fileUpload.success === true) {
           setAlert({
             status: "success",
@@ -340,32 +353,82 @@ export default function Home() {
       </Content>
       <Modal header={header} idName="formModal">
         <form onSubmit={(e) => postData(e)}>
-          <TextInput label="Nama Product" icon={RiBox3Line}>
+          <TextInput label="Nama Store" icon={RiBox3Line}>
             <input
               name="name"
               type="text"
               className="grow"
-              placeholder="Simbat TMS"
+              placeholder="Cahaya Kemilau"
               value={formData.name}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
-          <TextInput label="Value" icon={CiSearch}>
+          <TextInput label="lat" icon={TbWorldLatitude}>
             <input
-              name="value"
+              name="lat"
               type="text"
               className="grow"
-              placeholder="AD01000010"
-              value={formData.value}
+              placeholder="097213123"
+              value={formData.lat}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+          <TextInput label="long" icon={TbWorldLongitude}>
+            <input
+              name="long"
+              type="text"
+              className="grow"
+              placeholder="-097213123"
+              value={formData.long}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+          <TextInput label="kode" icon={BiBarcode}>
+            <input
+              name="kode"
+              type="text"
+              className="grow"
+              placeholder="01150"
+              value={formData.kode}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+          <TextInput label="password" icon={CgPassword}>
+            <input
+              name="password"
+              type="password"
+              className="grow"
+              placeholder="****"
+              value={formData.password}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+          <TextInput label="top" icon={CiCalendarDate}>
+            <input
+              name="top"
+              type="number"
+              className="grow"
+              placeholder="30"
+              value={formData.top}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+          <TextInput label="full_address" icon={TbMapSearch}>
+            <input
+              name="full_address"
+              type="text"
+              className="grow"
+              placeholder="097213123"
+              value={formData.full_address}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>
           <SelectInput
-            label="Brand"
-            name="brandId"
-            data={brandData}
+            label="Address"
+            name="addressId"
+            data={addressData}
             handleChange={handleChange}
-            value={formData.brandId}
+            value={formData.addressId}
             required={true}
           />
           <button
