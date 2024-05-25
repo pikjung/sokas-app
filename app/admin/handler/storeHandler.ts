@@ -62,6 +62,7 @@ export const buttonHandler = (
     top: 0,
     addressId: "",
     full_address: "",
+    no_telp: ""
   });
   setFormMethod("create");
   const formModal = <HTMLElement>document.getElementById("formModal");
@@ -86,16 +87,17 @@ export const formHandler = async (
         password: formData.password,
         top: formData.top,
         addressId: formData.addressId,
+        no_telp: formData.no_telp,
         full_address: formData.full_address,
       };
+      const formModal = <HTMLElement>document.getElementById("formModal");
+      formModal.close();
       const url = `${apiUrl}/admin/store`;
       const response = await axios.post(url, data, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      const formModal = <HTMLElement>document.getElementById("formModal");
-      formModal.close();
       return {
         success: true,
         data: response.data,
@@ -125,6 +127,7 @@ export const formHandler = async (
         top: formData.top,
         addressId: formData.addressId,
         full_address: formData.full_address,
+        no_telp: formData.no_telp,
       };
       const url = `${apiUrl}/admin/store/${id}`;
       const response = await axios.put(url, data, {
@@ -165,10 +168,11 @@ export const editHandler = (
     lat: item.latitude,
     long: item.longitude,
     kode: item.kode,
-    password: item.password,
+    password: "",
     top: item.term_of_payment,
     addressId: item.addressId,
     full_address: item.full_address,
+    no_telp: item.no_telp,
   });
   setId(item.id);
   setFormMethod("update");

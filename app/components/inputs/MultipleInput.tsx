@@ -6,26 +6,30 @@ import { FaTrash } from "react-icons/fa";
 interface MultipleInputProps {
     produk: string;
     handleDelete: (value: string) => void;
+    handleQuantityChange: (id: string, quantity: number) => void;
 }
 
 const MultipleInput: React.FC<MultipleInputProps> = ({
     produk,
-    handleDelete
+    handleDelete,
+    handleQuantityChange
 }) => {
 
-    const [number, setNumber] = useState(0);
+    const [number, setNumber] = useState(1);
 
     function minButton() {
-        number > 0 ? setNumber(number - 1) : setNumber(number)
+        number > 1 ? setNumber(number - 1) : setNumber(number)
+        number > 1 ? handleQuantityChange(produk.id, number - 1) : handleQuantityChange(produk.id, number)
     }
 
     function plusButton() {
         setNumber(number + 1)
+        handleQuantityChange(produk.id, number + 1)
     }
 
     return (
         <div className="flex gap-1 content-between items-center text-sm">
-            <div className="truncate w-96 lg:w-full">{produk.produk}</div>
+            <div className="truncate w-96 lg:w-full">{produk.name}</div>
             <div className="join join-horizontal border">
                 <button className="join-item w-10 p-2 text-indigo-500 font-bold" onClick={minButton}>-</button>
                 <input
@@ -39,7 +43,7 @@ const MultipleInput: React.FC<MultipleInputProps> = ({
                 />
                 <button className="join-item w-10 p-2 grow-0 text-indigo-500 font-bold" onClick={plusButton}>+</button>
             </div>
-            <div className="mx-auto lg:w-24"><button onClick={() => handleDelete(produk.kode)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div>
+            <div className="mx-auto lg:w-24"><button onClick={() => handleDelete(produk.id)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div>
         </div>
     )
 }

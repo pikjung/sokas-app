@@ -47,6 +47,7 @@ interface FormData {
   top: string;
   addressId: string;
   full_address: string;
+  no_telp: string;
 }
 
 export default function Home() {
@@ -59,6 +60,7 @@ export default function Home() {
     top: "",
     addressId: "",
     full_address: "",
+    no_telp: "",
   });
   const [id, setId] = useState("");
   const [header, setHeader] = useState("Tambah Brand");
@@ -71,7 +73,7 @@ export default function Home() {
   const [data, setData] = useState();
   const [addressData, setAddressData] = useState([]);
 
-  const tableHeader = ["Name", "Value", "Brand"];
+  const tableHeader = ["Kode", "Nama Toko", "Alamat", "No Telp"];
 
   const router = useRouter();
 
@@ -320,9 +322,10 @@ export default function Home() {
           {data &&
             data.map((item: any) => (
               <tr key={item.id}>
+                <td>{item.kode}</td>
                 <td>{item.name}</td>
-                <td>{item.value}</td>
-                <td>{item.Brand?.name}</td>
+                <td>{item.no_telp}</td>
+                <td>{item.Address?.name}</td>
                 <td>
                   <div className="flex gap-2">
                     <button
@@ -410,6 +413,16 @@ export default function Home() {
               className="grow"
               placeholder="30"
               value={formData.top}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+          <TextInput label="No Telp" icon={CiCalendarDate}>
+            <input
+              name="no_telp"
+              type="text"
+              className="grow"
+              placeholder="30"
+              value={formData.no_telp}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>

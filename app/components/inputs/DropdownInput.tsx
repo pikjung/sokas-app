@@ -8,7 +8,7 @@ interface DropdownInputProps {
   handleChange: (value: string) => void;
   handleChangeProduct: (value: string) => void;
   placeholder: string;
-  options?: [] | string;
+  options: [];
   showDropdown: boolean;
   handleShowDropdown: () => void;
 }
@@ -42,7 +42,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
           <div className="mx-auto max-h-48 p-4 w-full absolute max-w-screen-sm overflow-auto rounded-lg border bg-white shadow-sm lg:block">
             <div className="divide-y divide-slate-200">
               {options.map((option) => (
-                <p onClick={() => handleChangeProduct(option.kode)} className="cursor-pointer" key={option.kode}>{option.produk}</p>
+                <p onClick={() => handleChangeProduct(option.value)} className="cursor-pointer" key={option.value}>{option.name}</p>
               ))}
             </div>
           </div>

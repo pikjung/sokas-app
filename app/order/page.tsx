@@ -5,53 +5,58 @@ import Container from "../components/Container";
 import DropdownInput from "../components/inputs/DropdownInput";
 import Card from "../components/Card";
 import Select from "../components/inputs/Select";
-import { products } from "../components/products";
 import MultipleInput from "../components/inputs/MultipleInput";
 import HeaderPage from "../components/HeaderPage";
+import Toast from "../admin/components/Toast";
 
-const data = [
-  {
-    value: "philips",
-    name: "Philips",
-  },
-  {
-    value: "panasonic",
-    name: "Panasonic",
-  },
-  {
-    value: "schneider",
-    name: "Schneider",
-  },
-  {
-    value: "supreme",
-    name: "Supreme",
-  },
-]
+import { addProductToCart, getBrand, getProduct } from "../handler/orderHandler";
+
+import { getToken } from "../utils/getToken";
+import { useRouter } from "next/navigation";
+import { verifyToken } from "../handler/authHandler";
 
 const Home = () => {
 
-  const [brandProducts, setBrandProducts] = useState('philips');
-  const [options, setOptions] = useState([]);
-  const [produk, setProduk] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter()
 
-  function handleBrandChanges(value: any) {
-    setOptions([])
-    setBrandProducts(value)
+  const [product, setProduct] = useState([]);
+  const [brand, setBrand] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [toast, setToast] = useState(false)
+  const [alert, setAlert] = useState({
+    status: "",
+    message: ""
+  })
+
+  function handleBrandChanges(e: string) {
+    setProduct([])
+    getProduct(setProduct, e)
   }
 
+  useEffect(() => {
+    getBrand(setBrand, setProduct);
+  }, []);
+
   function handleProductChange(searchParams: string) {
-    const filteredProducts = products.filter(product =>
-      product.produk.toString().toLowerCase().includes(searchParams.toLowerCase()) &&
-      product.brand.toLowerCase().includes(brandProducts.toLowerCase())
+    const filteredProducts = product.filter(item =>
+      item.name.toString().toLowerCase().includes(searchParams.toLowerCase())
     )
-    setOptions(filteredProducts)
+    setProduct(filteredProducts)
+  }
+
+  function addCart() {
+    const add: any = addProductToCart(cart)
+    if (add.status === "success") {
+      console.log("Product added to cart successfully")
+    }
   }
 
   function handleChangeProduct(selectParam: string) {
-    const product = products.filter(p => p.kode.includes(selectParam))
-    if (produk.filter(item => item.kode === selectParam).length === 0) {
-      setProduk([...produk, product[0]])
+    const sproduct = product.filter(p => p.value.includes(selectParam))
+    if (cart.filter(item => item.value === selectParam).length === 0) {
+      const qproduct = { ...sproduct[0], quantity: 1 }
+      setCart([...cart, qproduct])
     }
     setShowDropdown(!showDropdown)
   }
@@ -60,12 +65,43 @@ const Home = () => {
     setShowDropdown(!showDropdown)
   }
 
-  function handleDelete(value: type) {
-    setProduk(produk.filter(item => item.kode !== value))
+  function handleDelete(value: string) {
+    setCart(cart.filter(item => item.id !== value))
   }
+
+  const authenticate = async () => {
+    if (!getToken()) {
+      router.push('/login');
+      return null
+    }
+    const authorization = await verifyToken(getToken());
+
+    if (authorization.success === false) {
+      setAlert({
+        status: "warning",
+        message: "You are not authorized"
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      router.push('/login');
+    }
+  }
+
+  const handleQuantityChange = (id: string, quantity: number) => {
+    setCart(cart.map(item => item.id === id ? { ...item, quantity: quantity } : item));
+  };
+
+  useEffect(() => {
+    authenticate();
+  }, [])
 
   return (
     <Container flex={false} wrap={false}>
+      {toast && (
+        <Toast status={alert.status} message={alert.message} />
+      )}
       <HeaderPage title="Form Sales Order KAS">
         Isi form sesuai dengan produk yang akan anda beli
       </HeaderPage>
@@ -74,26 +110,36 @@ const Home = () => {
         <Card header="Buat Order">
           <div className="grid grid-cols-1 gap-4">
             <Select id="brand" label="Pilih Brand" handleChange={handleBrandChanges} >
-              {data.map((item) => (
-                <option key={item.value} value={item.value}>{item.name}</option>
+              {brand.map((item) => (
+                <option key={item.id} value={item.id}>{item.name}</option>
               ))}
             </Select>
             <DropdownInput
               id="product"
               showDropdown={showDropdown}
               handleShowDropdown={handleShowDropdown}
-              options={options}
+              options={product}
               label="Pilih Produk"
               handleChangeProduct={handleChangeProduct}
               handleChange={handleProductChange}
               placeholder="TL-D 36W"
             />
-            {produk.map((item) => (
-              <MultipleInput key={item.kode} handleDelete={handleDelete} produk={item} />
+            {cart.map((item) => (
+              <MultipleInput key={item.id} handleDelete={handleDelete} produk={item} handleQuantityChange={handleQuantityChange} />
             ))}
 
             <div className="mt-5 border-t p-4">
-              <button className="float-right rounded-sm bg-indigo-500 p-2 text-white hover:bg-indigo-600">Tambah ke troli</button>
+              <button
+                className="
+                float-right 
+                rounded-sm 
+                bg-indigo-500 
+                p-2 
+                text-white 
+                hover:bg-indigo-600
+                "
+                onClick={addCart}
+              >Tambah ke troli</button>
             </div>
           </div>
         </Card>

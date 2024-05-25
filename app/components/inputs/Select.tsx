@@ -5,14 +5,13 @@ interface SelectProps {
   id: string;
   handleChange: (value: string) => void;
   children: React.ReactNode;
-
 }
 
 const Select: React.FC<SelectProps> = ({
   label,
   id,
   handleChange,
-  children,
+  children
 }) => {
   return (
     <div className="mb-4">
@@ -20,7 +19,7 @@ const Select: React.FC<SelectProps> = ({
       <select id={id} className="w-full border-b p-2" name="" onChange={(e) => handleChange(e.target.value)}>
         {children}
       </select>
-    </div>
+    </div >
   );
 }
 

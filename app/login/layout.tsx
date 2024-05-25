@@ -12,10 +12,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({
 }) => {
   return (
     <section>
-      <Navbar />
       {children}
-      <div className="mb-12 mt-12"></div>
-      <BottomNavigation />
     </section>
   );
 }
