@@ -12,6 +12,18 @@ const config: Config = {
     transparent: "transparent",
     current: "currentColor",
     extend: {
+      animation: {
+        'shake': 'shake 0.5s ease-in-out',
+      },
+      keyframes: {
+        shake: {
+          '0%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-4px)' },
+          '50%': { transform: 'translateX(0)' },
+          '75%': { transform: 'translateX(4px)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -93,12 +105,6 @@ const config: Config = {
         "tremor-small": "0.375rem",
         "tremor-default": "0.5rem",
         "tremor-full": "9999px",
-      },
-      fontSize: {
-        "tremor-label": ["0.75rem"],
-        "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
-        "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
-        "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
       },
     },
   },

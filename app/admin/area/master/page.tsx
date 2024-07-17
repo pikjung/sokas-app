@@ -13,7 +13,7 @@ import TextInput from "../../components/input/TextInput"
 import SelectInput from "../../components/input/SelectInput"
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { verifyToken } from '../../handler/authHandler'
 import { getToken } from '../../utils/getToken'
 
@@ -49,35 +49,35 @@ export default function Home() {
     message: ""
   })
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
   const [userData, setuserData] = useState([])
 
   const tableHeader = ['Area', 'PIC']
 
   const router = useRouter()
 
-  const authenticate = async () => {
+  const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push('/admin/login');
-      return null
+      return null;
     }
     const authorization = await verifyToken(getToken());
 
     if (authorization.success === false) {
       setAlert({
-        status: "warning",
-        message: "You are not authorized"
-      })
-      setToast(true)
+        status: 'warning',
+        message: 'You are not authorized'
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
       router.push('/admin/login');
     }
-  }
+  }, [router]);
 
   //ambil data area
-  const getMasterAreaData = async () => {
+  const getMasterAreaData = useCallback(async () => {
     const data: any = await fetchData();
     if (data.success) {
       setData(data.data)
@@ -94,10 +94,10 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate]);
 
   //ambil data role
-  const getUserData = async () => {
+  const getUserData = useCallback(async () => {
     const data: any = await userFetchData();
     if (data.success) {
       setuserData(data.data)
@@ -114,7 +114,7 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate]);
 
   //create dan update data user
   const postData = async (e: any) => {
@@ -196,7 +196,7 @@ export default function Home() {
     authenticate()
     getMasterAreaData()
     getUserData()
-  }, [])
+  }, [authenticate, getMasterAreaData, getUserData])
   return (
     <Container>
       <Navbar />

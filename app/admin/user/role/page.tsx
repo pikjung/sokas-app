@@ -20,7 +20,7 @@ import { handleChange, buttonHandler, fetchData, editHandler, deleteHandler, del
 import { IoCreateOutline } from "react-icons/io5";
 import { MdLockOutline } from "react-icons/md";
 import { LiaPaperPlane } from "react-icons/lia";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -43,12 +43,12 @@ export default function Home() {
     name: "",
   });
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [header, setHeader] = useState("Tambah Role");
   const [id, setId] = useState("");
   const tableHeader = ["Nama"];
 
-  const authenticate = async () => {
+  const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push('/admin/login');
       return null
@@ -68,10 +68,10 @@ export default function Home() {
       router.push('/admin/login');
     }
 
-  };
+  }, [router]);
 
   //Ambil data
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const dataFetch: any = await fetchData();
     if (dataFetch.success) {
       setData(dataFetch.data)
@@ -88,7 +88,7 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate])
 
   //input dan update data
   const postData = async (e: any) => {
@@ -150,7 +150,7 @@ export default function Home() {
   useEffect(() => {
     authenticate();
     getData()
-  }, []);
+  }, [authenticate, getData]);
 
   const button = (
     <Action>

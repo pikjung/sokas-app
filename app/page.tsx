@@ -1,16 +1,54 @@
 'use client'
 
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getToken } from "./utils/getToken";
+import { verifyToken } from "./handler/authHandler";
+
 import Navbar from "./components/navbar/Navbar"
 import BottomNavigation from "./components/navbar/BottomNavigation"
 import Container from "./components/Container"
 import HeaderPage from "./components/HeaderPage"
 import Card from "./components/Card";
+import Toast from "./admin/components/Toast";
 
 export default function Home() {
+  const router = useRouter()
+  const [toast, setToast] = useState(false)
+  const [alert, setAlert] = useState({
+    status: "",
+    message: ""
+  })
+  const authenticate = useCallback(async () => {
+    if (!getToken()) {
+      router.push('/login');
+      return null
+    }
+    const authorization = await verifyToken(getToken());
+
+    if (authorization.success === false) {
+      setAlert({
+        status: "warning",
+        message: "You are not authorized"
+      })
+      setToast(true)
+      setTimeout(() => {
+        setToast(false)
+      }, 2000);
+      router.push('/login');
+    }
+  }, [router])
+
+  useEffect(() => {
+    authenticate();
+  }, [authenticate]);
   return (
     <>
       <Navbar />
       <Container flex={false} wrap={false}>
+        {toast && (
+          <Toast status={alert.status} message={alert.message} />
+        )}
         <HeaderPage title="Toko Permai">
           Anda memiliki <span className="text-slate-900 font-bold"> 4 Order diproses</span>, dan <span className="text-teal-500">19 Order selesai</span>!
         </HeaderPage>

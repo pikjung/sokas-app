@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Container from "../components/Container";
 import DropdownInput from "../components/inputs/DropdownInput";
 import Card from "../components/Card";
@@ -15,13 +15,31 @@ import { getToken } from "../utils/getToken";
 import { useRouter } from "next/navigation";
 import { verifyToken } from "../handler/authHandler";
 
+interface Product {
+  id: string,
+  name: string,
+  value: string
+}
+
+interface Cart {
+  id: string,
+  name: string,
+  value: string,
+  quantity: number
+}
+
+interface Brand {
+  id: string,
+  name: string,
+}
+
 const Home = () => {
 
   const router = useRouter()
 
-  const [product, setProduct] = useState([]);
-  const [brand, setBrand] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [product, setProduct] = useState<Product[]>([]);
+  const [brand, setBrand] = useState<Brand[]>([]);
+  const [cart, setCart] = useState<Cart[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [toast, setToast] = useState(false)
   const [alert, setAlert] = useState({
@@ -47,9 +65,15 @@ const Home = () => {
 
   function addCart() {
     const add: any = addProductToCart(cart)
-    if (add.status === "success") {
-      console.log("Product added to cart successfully")
-    }
+    setCart([]);
+    setAlert({
+      status: "Success",
+      message: "Produk sudah di tambah ke troli"
+    })
+    setToast(true)
+    setTimeout(() => {
+      setToast(false)
+    }, 2000);
   }
 
   function handleChangeProduct(selectParam: string) {
@@ -69,7 +93,7 @@ const Home = () => {
     setCart(cart.filter(item => item.id !== value))
   }
 
-  const authenticate = async () => {
+  const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push('/login');
       return null
@@ -87,7 +111,7 @@ const Home = () => {
       }, 2000);
       router.push('/login');
     }
-  }
+  }, [router])
 
   const handleQuantityChange = (id: string, quantity: number) => {
     setCart(cart.map(item => item.id === id ? { ...item, quantity: quantity } : item));
@@ -95,7 +119,7 @@ const Home = () => {
 
   useEffect(() => {
     authenticate();
-  }, [])
+  }, [authenticate]);
 
   return (
     <Container flex={false} wrap={false}>
@@ -142,10 +166,6 @@ const Home = () => {
               >Tambah ke troli</button>
             </div>
           </div>
-        </Card>
-
-        <Card header="Order paket bundling">
-          <div>Hello</div>
         </Card>
       </div>
 

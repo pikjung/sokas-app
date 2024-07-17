@@ -97,59 +97,60 @@ const Home = () => {
 
 
   return (
-    <div className="flex justify-center items-center" >
+    <div className="flex justify-center items-center min-h-screen">
       {toast && (
         <Toast status={alert.status} message={alert.message} />
       )}
-      <div className="flex w-full">
-        <div className="w-1/3 bg-gradient-to-r from-red-600 to-indigo-400">
+      <div className="flex w-full flex-col lg:flex-row">
+        <div className="w-full lg:w-1/2 lg:h-auto lg:bg-blue-600">
         </div>
-        <div className="w-1/3 flex h-screen px-16">
-          <div className="w-full my-auto">
-            <h2 className="text-2xl text-slate-500 font-semibold">Login</h2>
-            <p className="font-light text-slate-500 mb-4">
-              Halo, selamat datang kembali!
-            </p>
-            <form onSubmit={formHandler}>
-              <TextInput label="kode" icon={FaRegUser}>
-                <input
-                  name="kode"
-                  type="text"
-                  className="grow"
-                  placeholder="kode"
-                  value={kode}
-                  required
-                  onChange={(e) => setKode(e.target.value)}
-                />
-              </TextInput>
-              <TextInput label="Password" icon={RiLockPasswordFill}>
-                <input
-                  name="password"
-                  type="password"
-                  className="grow"
-                  placeholder="Password"
-                  value={password}
-                  required
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </TextInput>
-              {isError && <p className="text-red-500 text-sm">{error}</p>}
-              <div className="float-right underline mt-4 mb-4 text-slate-500">
-                Forgot Password?
-              </div>
-              <button
-                type="submit"
-                className="rounded-xl w-full mt-6 my-auto flex justify-center items-center bg-indigo-600 p-2 text-white hover:bg-indigo-700"
-              >
-                Log in
-              </button>
-            </form>
+        <div className="w-full lg:w-1/2 flex h-auto lg:h-screen px-6 lg:px-16 py-6 lg:py-0">
+          <div className="border p-8 my-auto mx-auto rounded-lg shadow-md">
+            <div className="w-full">
+              <h2 className="text-2xl text-slate-500 font-semibold">Login</h2>
+              <p className="font-light text-slate-500 mb-4">
+                Halo, selamat datang kembali!
+              </p>
+              <form onSubmit={formHandler}>
+                <TextInput label="kode" icon={FaRegUser}>
+                  <input
+                    name="kode"
+                    type="text"
+                    className="grow"
+                    placeholder="kode"
+                    value={kode}
+                    required
+                    onChange={(e) => setKode(e.target.value)}
+                  />
+                </TextInput>
+                <TextInput label="Password" icon={RiLockPasswordFill}>
+                  <input
+                    name="password"
+                    type="password"
+                    className="grow"
+                    placeholder="Password"
+                    value={password}
+                    required
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </TextInput>
+                {isError && <p className="text-red-500 text-sm">{error}</p>}
+                <div className="float-right underline mt-4 mb-4 text-slate-500">
+                  Forgot Password?
+                </div>
+                <button
+                  type="submit"
+                  className="rounded-xl w-full mt-6 my-auto flex justify-center items-center bg-indigo-600 p-2 text-white hover:bg-indigo-700"
+                >
+                  Log in
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-        <div className="w-1/3 bg-gradient-to-r from-indigo-400 to-red-600">
-        </div>
       </div>
-    </div >
+    </div>
+
   );
 }
 

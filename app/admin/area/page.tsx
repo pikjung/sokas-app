@@ -13,7 +13,7 @@ import TextInput from "../components/input/TextInput"
 import SelectInput from "../components/input/SelectInput"
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { verifyToken } from '../handler/authHandler'
 import { getToken } from '../utils/getToken'
 import Link from "next/link"
@@ -54,7 +54,7 @@ export default function Home() {
     message: ""
   })
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
   const [masterAreaData, setMasterAreaData] = useState([])
   const [userData, setUserData] = useState([])
 
@@ -62,7 +62,7 @@ export default function Home() {
 
   const router = useRouter()
 
-  const authenticate = async () => {
+  const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push('/admin/login');
       return null
@@ -80,10 +80,10 @@ export default function Home() {
       }, 2000);
       router.push('/admin/login');
     }
-  }
+  }, [router])
 
   //ambil data area
-  const getAreaData = async () => {
+  const getAreaData = useCallback(async () => {
     const data: any = await fetchData();
     if (data.success) {
       setData(data.data)
@@ -100,10 +100,10 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate])
 
   //ambil data role
-  const getSideData = async () => {
+  const getSideData = useCallback(async () => {
     const data: any = await fetchSideData();
     if (data.success) {
       setMasterAreaData(data.masterAreaData)
@@ -121,7 +121,7 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate])
 
   //create dan update data user
   const postData = async (e: any) => {
@@ -210,7 +210,7 @@ export default function Home() {
     authenticate()
     getAreaData()
     getSideData()
-  }, [])
+  }, [authenticate, getAreaData, getSideData]);
   return (
     <Container>
       <Navbar />

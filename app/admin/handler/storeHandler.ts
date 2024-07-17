@@ -65,9 +65,11 @@ export const buttonHandler = (
     no_telp: ""
   });
   setFormMethod("create");
-  const formModal = <HTMLElement>document.getElementById("formModal");
+  const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
   setHeader("Tambah Akun");
-  formModal.showModal();
+  if (formModal) {
+    formModal.showModal();
+  }
 };
 
 export const formHandler = async (
@@ -90,8 +92,10 @@ export const formHandler = async (
         no_telp: formData.no_telp,
         full_address: formData.full_address,
       };
-      const formModal = <HTMLElement>document.getElementById("formModal");
-      formModal.close();
+      const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
+      if (formModal) {
+        formModal.close();
+      }
       const url = `${apiUrl}/admin/store`;
       const response = await axios.post(url, data, {
         headers: {
@@ -135,8 +139,10 @@ export const formHandler = async (
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      const formModal = <HTMLElement>document.getElementById("formModal");
-      formModal.close();
+      const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
+      if (formModal) {
+        formModal.close();
+      }
       return {
         success: true,
         data: response.data,
@@ -176,9 +182,11 @@ export const editHandler = (
   });
   setId(item.id);
   setFormMethod("update");
-  const formModal = <HTMLElement>document.getElementById("formModal");
+  const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
   setHeader("Edit Akun");
-  formModal.showModal();
+  if (formModal) {
+    formModal.showModal();
+  }
 };
 
 export const deleteHandler = (item: any, setFormData: any, setId: any) => {
@@ -187,8 +195,10 @@ export const deleteHandler = (item: any, setFormData: any, setId: any) => {
     name: item.name,
   });
   setId(item.id);
-  const deleteModal = document.getElementById("deleteModal");
-  deleteModal.showModal();
+  const deleteModal = document.getElementById("deleteModal") as HTMLDialogElement | null;
+  if (deleteModal) {
+    deleteModal.showModal();
+  }
 };
 
 export const deleteStore = async (id: string) => {
@@ -199,8 +209,10 @@ export const deleteStore = async (id: string) => {
         Authorization: `Bearer ${getToken()}`,
       },
     });
-    const formModal = <HTMLElement>document.getElementById("deleteModal");
-    formModal.close();
+    const formModal = <HTMLElement>document.getElementById("deleteModal") as HTMLDialogElement | null;
+    if (formModal) {
+      formModal.close();
+    }
 
     fetchData();
     return {
@@ -223,13 +235,17 @@ export const deleteStore = async (id: string) => {
 };
 
 export const buttonImportHandler = () => {
-  const importModal = document.getElementById("importModal");
-  importModal.showModal();
+  const importModal = document.getElementById("importModal") as HTMLDialogElement | null;
+  if (importModal) {
+    importModal.showModal();
+  }
 };
 
 export const uploadStore = async (file: File): Promise<any> => {
-  const formModal = <HTMLElement>document.getElementById("importModal");
-  formModal.close();
+  const formModal = <HTMLElement>document.getElementById("importModal") as HTMLDialogElement | null;
+  if (formModal) {
+    formModal.close();
+  }
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -237,7 +253,7 @@ export const uploadStore = async (file: File): Promise<any> => {
     const response = await axios.post(url, formData, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
-        headers: { "Content-Type": "multipart/form-data" },
+        // headers: { "Content-Type": "multipart/form-data" },
       },
     });
 

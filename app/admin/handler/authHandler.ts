@@ -24,6 +24,10 @@ export const verifyToken = async (token: any) => {
         Authorization: "Bearer " + token,
       },
     });
+    if (response.data.data.role !== 'admin') {
+      deleteToken()
+      throw new Error("Invalid Role")
+    }
     return {
       success: true,
       data: response.data

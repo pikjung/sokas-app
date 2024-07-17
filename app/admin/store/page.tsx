@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import Content from "../components/Content";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { verifyToken } from "../handler/authHandler";
 import { getToken } from "../utils/getToken";
 import Toast from "../components/Toast";
@@ -70,14 +70,14 @@ export default function Home() {
     message: "",
   });
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [addressData, setAddressData] = useState([]);
 
   const tableHeader = ["Kode", "Nama Toko", "Alamat", "No Telp"];
 
   const router = useRouter();
 
-  const authenticate = async () => {
+  const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push("/admin/login");
       return null;
@@ -95,10 +95,10 @@ export default function Home() {
       }, 2000);
       router.push("/admin/login");
     }
-  };
+  }, [router]);
 
   //ambil data area
-  const getProductData = async () => {
+  const getProductData = useCallback(async () => {
     const data: any = await fetchData();
     if (data.success) {
       setData(data.data);
@@ -115,10 +115,10 @@ export default function Home() {
       }, 2000);
       authenticate();
     }
-  };
+  }, [authenticate]);
 
   //ambil data role
-  const getSideData = async () => {
+  const getSideData = useCallback(async () => {
     const data: any = await fetchSideData();
     if (data.success) {
       setAddressData(data.data);
@@ -135,7 +135,7 @@ export default function Home() {
       }, 2000);
       authenticate();
     }
-  };
+  }, [authenticate]);
 
   //create dan update data user
   const postData = async (e: any) => {
@@ -252,7 +252,7 @@ export default function Home() {
     authenticate();
     getProductData();
     getSideData();
-  }, []);
+  }, [authenticate, getProductData, getSideData]);
 
   const button = (
     <Action>

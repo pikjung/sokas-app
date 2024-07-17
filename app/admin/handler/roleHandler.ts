@@ -46,8 +46,10 @@ export const buttonHandler = (
   });
   setFormMethod("create");
   setHeader("Tambah Role");
-  const formModal = <HTMLElement>document.getElementById("formModal");
-  formModal.showModal();
+  const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
+  if (formModal) {
+    formModal.showModal();
+  }
 };
 
 export const formHandler = async (
@@ -68,8 +70,10 @@ export const formHandler = async (
           Authorization: `Bearer ${getToken()}`,
         }
       });
-      const formModal = <HTMLElement>document.getElementById("formModal");
-      formModal.close();
+      const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
+      if (formModal) {
+        formModal.close();
+      }
       return {
         success: true,
         data: response.data
@@ -97,8 +101,10 @@ export const formHandler = async (
           Authorization: `Bearer ${getToken()}`
         }
       });
-      const formModal = <HTMLElement>document.getElementById("formModal");
-      formModal.close();
+      const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
+      if (formModal) {
+        formModal.close();
+      }
       fetchData();
       return {
         success: true,
@@ -127,8 +133,10 @@ export const deleteRole = async (id: string) => {
         Authorization: `Bearer ${getToken()}`
       }
     });
-    const formModal = <HTMLElement>document.getElementById("deleteModal");
-    formModal.close();
+    const formModal = <HTMLElement>document.getElementById("deleteModal") as HTMLDialogElement | null;
+    if (formModal) {
+      formModal.close();
+    }
 
     fetchData();
     return {
@@ -163,9 +171,11 @@ export const editHandler = (
   });
   setId(item.id);
   setFormMethod("update");
-  const formModal = document.getElementById("formModal");
+  const formModal = document.getElementById("formModal") as HTMLDialogElement | null;
   setHeader("Edit Role");
-  formModal.showModal();
+  if (formModal) {
+    formModal.showModal();
+  }
 };
 
 export const deleteHandler = (item: any, setFormData: any, setId: any) => {
@@ -174,6 +184,8 @@ export const deleteHandler = (item: any, setFormData: any, setId: any) => {
     name: item.name,
   });
   setId(item.id);
-  const deleteModal = document.getElementById("deleteModal");
-  deleteModal.showModal();
+  const deleteModal = document.getElementById("deleteModal") as HTMLDialogElement | null;
+  if (deleteModal) {
+    deleteModal.showModal();
+  }
 };

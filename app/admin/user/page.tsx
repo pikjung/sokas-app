@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { verifyToken } from '../handler/authHandler'
 import { getToken } from '../utils/getToken'
 import Toast from "../components/Toast"
@@ -58,7 +58,7 @@ export default function Home() {
   });
   const [roleData, setRoleData] = useState([])
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
   const [header, setHeader] = useState("Tambah Akun");
   const [id, setId] = useState("");
   const tableHeader = ["Nama", "Email", "Username", "Role"];
@@ -71,7 +71,7 @@ export default function Home() {
 
   const router = useRouter()
 
-  const authenticate = async () => {
+  const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push('/admin/login');
       return null
@@ -89,10 +89,10 @@ export default function Home() {
       }, 2000);
       router.push('/admin/login');
     }
-  }
+  }, [router])
 
   //Ambil data user
-  const getUserData = async () => {
+  const getUserData = useCallback(async () => {
     const data: any = await fetchData();
     if (data.success) {
       setData(data.data)
@@ -109,10 +109,10 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate])
 
   //ambil data role
-  const getRoleData = async () => {
+  const getRoleData = useCallback(async () => {
     const data: any = await rolefetchData();
     if (data.success) {
       setRoleData(data.data)
@@ -129,7 +129,7 @@ export default function Home() {
       }, 2000);
       authenticate()
     }
-  }
+  }, [authenticate])
 
   //create dan update data user
   const postData = async (e: any) => {
@@ -201,7 +201,7 @@ export default function Home() {
     authenticate();
     getUserData();
     getRoleData();
-  }, []);
+  }, [authenticate, getUserData, getRoleData]);
 
   const button = (
     <Action>

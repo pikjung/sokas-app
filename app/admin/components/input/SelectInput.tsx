@@ -2,9 +2,9 @@ import { IconType } from "react-icons";
 
 interface SelectInputProps {
   label: string;
-  data: [];
+  data: any[];
   value: string;
-  handleChange: () => void;
+  handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   name: string;
   required?: boolean;
 }
@@ -15,7 +15,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
   value,
   handleChange,
   name,
-  required = false
+  required
 }) => {
 
   return (
@@ -25,7 +25,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
           {label}
         </span>
       </div>
-      <select name={name} value={value} className="select select-bordered" onChange={(e) => handleChange(e)} required={`${required ? 'required' : ''}`}>
+      <select name={name} value={value} className="select select-bordered" onChange={(e) => handleChange(e)} required={required}>
         <option value="">--Pilih--</option>
         {data &&
           data.map((item: any) => (

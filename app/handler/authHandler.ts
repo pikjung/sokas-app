@@ -24,6 +24,12 @@ export const verifyToken = async (token: any) => {
         Authorization: "Bearer " + token,
       },
     });
+
+    if (response.data.data.role !== 'store') {
+      deleteToken()
+      throw new Error("Invalid role")
+    }
+
     return {
       success: true,
       data: response.data
@@ -32,7 +38,7 @@ export const verifyToken = async (token: any) => {
     deleteToken()
     return {
       success: false,
-      error: error.response.data
+      error: error
     };
   }
 };

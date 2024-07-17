@@ -42,7 +42,7 @@ export default function Home() {
       }
     )
       .then((res) => {
-        setToken(res.data.data)
+        setToken(res.data.data.token)
         setAlert({
           status: 'success',
           message: res.data.message
@@ -51,7 +51,16 @@ export default function Home() {
         setTimeout(() => {
           setToast(false)
         }, 2000);
-        router.push('/admin')
+        if (res.data.data.role === 'admin') {
+          router.push('/admin')
+        } else if (res.data.data.role === 'sales') {
+          router.push('/sales')
+        } else if (res.data.data.role === 'ssAdmin') {
+          router.push('/ssAdmin')
+        } else {
+          deleteToken()
+          router.push('/admin/login')
+        }
       }).catch((error) => {
         if (error.response.status === 401) {
           setAlert({
