@@ -46,6 +46,10 @@ const Home = () => {
     status: "",
     message: ""
   })
+  const [formStatus, setFormStatus] = useState({
+    cartStatus: false,
+  })
+
 
   function handleBrandChanges(e: string) {
     setProduct([])
@@ -63,17 +67,30 @@ const Home = () => {
     setProduct(filteredProducts)
   }
 
-  function addCart() {
-    const add: any = addProductToCart(cart)
-    setCart([]);
-    setAlert({
-      status: "Success",
-      message: "Produk sudah di tambah ke troli"
-    })
-    setToast(true)
-    setTimeout(() => {
-      setToast(false)
-    }, 2000);
+  async function addCart() {
+    const add: any = await addProductToCart(cart)
+    if (add) {
+      if (add.status === "success") {
+        setCart([]);
+        setAlert({
+          status: "Success",
+          message: "Produk sudah di tambah ke troli"
+        })
+        setToast(true)
+        setTimeout(() => {
+          setToast(false)
+        }, 2000);
+      }
+    } else {
+      setFormStatus({
+        cartStatus: true
+      })
+      setTimeout(() => {
+        setFormStatus({
+          cartStatus: false
+        })
+      }, 2000);
+    }
   }
 
   function handleChangeProduct(selectParam: string) {
@@ -86,7 +103,13 @@ const Home = () => {
   }
 
   function handleShowDropdown() {
-    setShowDropdown(!showDropdown)
+    setShowDropdown(true);
+  }
+
+  function handleHideDropdown() {
+    setTimeout(() => {
+      setShowDropdown(false);
+    }, 200);
   }
 
   function handleDelete(value: string) {
@@ -142,15 +165,19 @@ const Home = () => {
               id="product"
               showDropdown={showDropdown}
               handleShowDropdown={handleShowDropdown}
+              handleHideDropdown={handleHideDropdown}
               options={product}
               label="Pilih Produk"
               handleChangeProduct={handleChangeProduct}
               handleChange={handleProductChange}
               placeholder="TL-D 36W"
             />
-            {cart.map((item) => (
-              <MultipleInput key={item.id} handleDelete={handleDelete} produk={item} handleQuantityChange={handleQuantityChange} />
-            ))}
+            <div className={`grid grid-cols-1 gap-4 w-full p-4 ${formStatus.cartStatus ? 'border border-red-600 text-red-600 animate-shake' : 'border-gray-300 text-gray-900'}`}>
+              {formStatus.cartStatus ? 'Mohon input item' : ''}
+              {cart.map((item) => (
+                <MultipleInput key={item.id} handleDelete={handleDelete} produk={item} handleQuantityChange={handleQuantityChange} />
+              ))}
+            </div>
 
             <div className="mt-5 border-t p-4">
               <button

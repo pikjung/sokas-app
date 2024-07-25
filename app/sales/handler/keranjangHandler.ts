@@ -35,6 +35,22 @@ export const updateKeranjang = async (cartId: string, qty: number) => {
   }
 }
 
+export const updateDiscount = async (cartId: string, discount: number) => {
+  try {
+    const response = await axios.put(`${apiUrl}/sales/cart/discount`, { cartId: cartId, discount: discount }, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      console.log(error)
+    } else {
+      console.error('Error', error)
+    }
+  }
+}
+
 export const deleteKeranjang = async (cartId: string) => {
   try {
     const response = await axios.delete(`${apiUrl}/sales/cart/${cartId}`, {

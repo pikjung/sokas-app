@@ -7,7 +7,7 @@ import MultipleInput from "../components/inputs/MultipleInput";
 import HeaderPage from "../components/HeaderPage";
 import Toast from "../../admin/components/Toast";
 
-import { getKeranjang, updateKeranjang, deleteKeranjang, checkOutKeranjang } from "../handler/keranjangHandler";
+import { getKeranjang, updateKeranjang, updateDiscount, deleteKeranjang, checkOutKeranjang } from "../handler/keranjangHandler";
 
 import { getToken } from "../../admin/utils/getToken";
 import { useRouter } from "next/navigation";
@@ -125,6 +125,12 @@ const Home = () => {
     updateKeranjang(id, qty)
   }
 
+  const handleDiscountChange = (id: string, discount: number) => {
+    updateDiscount(id, discount)
+  }
+
+
+
   const checkOut = async () => {
     if (keranjang.length === 0) {
       setAlert({
@@ -195,6 +201,7 @@ const Home = () => {
                         handleDelete={handleDelete}
                         produk={item}
                         handleQuantityChange={handleQuantityChange}
+                        handleDiscountChange={handleDiscountChange}
                       />
                     ))}
                   </div>

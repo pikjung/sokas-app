@@ -11,6 +11,7 @@ interface DropdownInputProps {
   options: any[];
   showDropdown: boolean;
   handleShowDropdown: () => void;
+  handleHideDropdown: () => void;
 }
 
 const DropdownInput: React.FC<DropdownInputProps> = ({
@@ -21,7 +22,8 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   placeholder,
   options,
   showDropdown,
-  handleShowDropdown
+  handleShowDropdown,
+  handleHideDropdown
 }) => {
 
 
@@ -36,6 +38,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
           placeholder={placeholder}
           onChange={(e) => handleChange(e.target.value)}
           onFocus={handleShowDropdown}
+          onBlur={handleHideDropdown}
         />
 
         <div className={`relative ${showDropdown ? 'visible' : 'invisible'}`}>

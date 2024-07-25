@@ -91,6 +91,13 @@ export default function Home() {
       ));
   };
 
+  const handleDiscountChange = (id: string, newDisc: any) => {
+    setDetailTransaction(
+      detailTransaction.map((produk: any) =>
+        produk.id === id ? { ...produk, discount: newDisc } : produk
+      ));
+  };
+
   const cancelOrder = async (id: string) => {
     const response = await cancelTransaksi(id);
     if (response.status === "success") {
@@ -168,17 +175,31 @@ export default function Home() {
               <div className="flex-1 w-96 lg:w-auto">
                 {produk.name ? produk.name : produk.Product.name}
               </div>
-              <div className="flex items-center gap-2">
-                <label htmlFor={`qty-${produk.id}`} className="text-gray-600">
-                  Quantity:
-                </label>
-                <input
-                  type="number"
-                  id={`qty-${produk.id}`}
-                  className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={produk.qty}
-                  onChange={(e) => handleQtyChange(produk.id, e.target.value)}
-                />
+              <div className="flex-wrap">
+                <div className="flex items-center gap-2 mb-2">
+                  <label htmlFor={`qty-${produk.id}`} className="text-gray-600">
+                    Quantity:
+                  </label>
+                  <input
+                    type="number"
+                    id={`qty-${produk.id}`}
+                    className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={produk.qty}
+                    onChange={(e) => handleQtyChange(produk.id, e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label htmlFor={`discount-${produk.id}`} className="text-gray-600">
+                    Diskon:
+                  </label>
+                  <input
+                    type="number"
+                    id={`discount-${produk.id}`}
+                    className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={produk.discount}
+                    onChange={(e) => handleDiscountChange(produk.id, e.target.value)}
+                  />%
+                </div>
               </div>
               {/* <div className="mx-auto"><button onClick={() => handleDelete(produk.id)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div> */}
             </div>

@@ -98,7 +98,7 @@ export default function Home() {
                 <span className={`flex-none rounded-lg py-1 px-2 items-center justify-center text-sm ${checkConfirm(item.processed_at, item.isCancel) ? "text-green-700" : "text-red-700"}`}>
                   {checkConfirm(item.processed_at, item.isCancel) ? "Confirm" : "Cancel"}
                 </span>
-                <p>{item.noted}</p>
+                <p className="flex-1 justify-center items-center">Noted: {item.noted}</p>
                 <div className="flex-1 justify-center items-center">
                   <button onClick={e => handleDetailTransaction(item.id)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-teal-600 hover:bg-teal-700 text-white text-lg shadow-lg">
                     <FaEye />
@@ -118,17 +118,31 @@ export default function Home() {
               <div className="flex-1 w-96 lg:w-auto">
                 {produk.name ? produk.name : produk.Product.name}
               </div>
-              <div className="flex items-center gap-2">
-                <label htmlFor={`qty-${produk.id}`} className="text-gray-600">
-                  Quantity:
-                </label>
-                <input
-                  type="number"
-                  id={`qty-${produk.id}`}
-                  className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={produk.qty}
-                  readOnly
-                />
+              <div className="flex-wrap">
+                <div className="flex items-center gap-2 mb-2">
+                  <label htmlFor={`qty-${produk.id}`} className="text-gray-600">
+                    Quantity:
+                  </label>
+                  <input
+                    type="number"
+                    id={`qty-${produk.id}`}
+                    className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={produk.qty}
+                    readOnly
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label htmlFor={`discount-${produk.id}`} className="text-gray-600">
+                    Discount:
+                  </label>
+                  <input
+                    type="number"
+                    id={`discount-${produk.id}`}
+                    className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={produk.discount}
+                    readOnly
+                  />
+                </div>
               </div>
               {/* <div className="mx-auto"><button onClick={() => handleDelete(produk.id)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div> */}
             </div>

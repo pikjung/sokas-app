@@ -25,7 +25,8 @@ interface Cart {
   id: string,
   name: string,
   value: string,
-  quantity: number
+  quantity: number,
+  discount: number
 }
 
 interface Brand {
@@ -44,6 +45,7 @@ const Home = () => {
   const router = useRouter()
 
   const [product, setProduct] = useState<Product[]>([]);
+  const [searchProduct, setSearchProduct] = useState<Product[]>([]);
   const [brand, setBrand] = useState<Brand[]>([]);
   const [tokos, setTokos] = useState<Toko[]>([]);
   const [cart, setCart] = useState<Cart[]>([]);
@@ -80,10 +82,15 @@ const Home = () => {
   }, []);
 
   function handleProductChange(searchParams: string) {
+    const searchWords = searchParams.toLowerCase().split(' ');
+
+    // Filter produk berdasarkan setiap kata dalam array searchWords
     const filteredProducts = product.filter(item =>
-      item.name.toString().toLowerCase().includes(searchParams.toLowerCase())
-    )
-    setProduct(filteredProducts)
+      searchWords.every(word => item.name.toString().toLowerCase().includes(word))
+    );
+
+    // Set hasil filter ke state product
+    setSearchProduct(filteredProducts);
   }
 
   async function addCart() {
@@ -130,14 +137,20 @@ const Home = () => {
   function handleChangeProduct(selectParam: string) {
     const sproduct = product.filter(p => p.value.includes(selectParam))
     if (cart.filter(item => item.value === selectParam).length === 0) {
-      const qproduct = { ...sproduct[0], quantity: 1 }
+      const qproduct = { ...sproduct[0], quantity: 1, discount: 0 }
       setCart([...cart, qproduct])
     }
     setShowDropdown(!showDropdown)
   }
 
   function handleShowDropdown() {
-    setShowDropdown(!showDropdown)
+    setShowDropdown(true);
+  }
+
+  function handleHideDropdown() {
+    setTimeout(() => {
+      setShowDropdown(false);
+    }, 200);
   }
 
   function handleDelete(value: string) {
@@ -166,6 +179,10 @@ const Home = () => {
 
   const handleQuantityChange = (id: string, quantity: number) => {
     setCart(cart.map(item => item.id === id ? { ...item, quantity: quantity } : item));
+  };
+
+  const handleDiscountChange = (id: string, discount: number) => {
+    setCart(cart.map(item => item.id === id ? { ...item, discount: discount } : item));
   };
 
   useEffect(() => {
@@ -199,16 +216,23 @@ const Home = () => {
               id="product"
               showDropdown={showDropdown}
               handleShowDropdown={handleShowDropdown}
-              options={product}
+              options={searchProduct}
               label="Pilih Produk"
               handleChangeProduct={handleChangeProduct}
               handleChange={handleProductChange}
+              handleHideDropdown={handleHideDropdown}
               placeholder="TL-D 36W"
             />
             <div className={`grid grid-cols-1 gap-4 w-full p-4 ${formStatus.cartStatus ? 'border border-red-600 text-red-600 animate-shake' : 'border-gray-300 text-gray-900'}`}>
               {formStatus.cartStatus ? 'Mohon input item' : ''}
               {cart.map((item) => (
-                <MultipleInput key={item.id} handleDelete={handleDelete} produk={item} handleQuantityChange={handleQuantityChange} />
+                <MultipleInput
+                  key={item.id}
+                  handleDelete={handleDelete}
+                  produk={item}
+                  handleQuantityChange={handleQuantityChange}
+                  handleDiscountChange={handleDiscountChange}
+                />
               ))}
             </div>
 

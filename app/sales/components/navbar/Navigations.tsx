@@ -1,4 +1,5 @@
 import { CiHome, CiReceipt, CiShop, CiShoppingBasket, CiUser } from "react-icons/ci";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 export const navigations = [
   {
@@ -22,8 +23,8 @@ export const navigations = [
     url: '/sales/keranjang'
   },
   {
-    name: 'Akun',
-    icon: CiUser,
+    name: 'KULES',
+    icon: FaMapMarkerAlt,
     url: '/sales/akun'
   },
 ]

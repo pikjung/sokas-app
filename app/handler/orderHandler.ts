@@ -44,7 +44,7 @@ export const addProductToCart = async (cart: any) => {
         Authorization: `Bearer ${getToken()}`,
       },
     })
-    return response.data.data
+    return response.data
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       console.log(error)
