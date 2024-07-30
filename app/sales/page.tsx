@@ -12,6 +12,11 @@ import HeaderPage from "./components/HeaderPage"
 import Card from "./components/Card";
 import Toast from "../admin/components/Toast";
 
+interface UserData {
+  name: string;
+  role: string;
+}
+
 export default function Home() {
   const router = useRouter()
   const [toast, setToast] = useState(false)
@@ -19,24 +24,31 @@ export default function Home() {
     status: "",
     message: ""
   })
+  const [userData, setUserData] = useState<UserData | null>(null);
+
   const authenticate = useCallback(async () => {
     if (!getToken()) {
       router.push('/admin/login');
       return null
     }
-    const authorization = await verifyToken(getToken());
+    await verifyToken(getToken())
+      .then(res => {
+        if (res.success === false) {
+          setAlert({
+            status: "warning",
+            message: "You are not authorized"
+          })
+          setToast(true)
+          setTimeout(() => {
+            setToast(false)
+          }, 2000);
+          router.push('/admin/login');
+        }
 
-    if (authorization.success === false) {
-      setAlert({
-        status: "warning",
-        message: "You are not authorized"
+        const { name, role } = res.data.data;
+        setUserData({ name: name, role: role });
       })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      router.push('/admin/login');
-    }
+
   }, [router])
 
   useEffect(() => {
@@ -49,11 +61,15 @@ export default function Home() {
         {toast && (
           <Toast status={alert.status} message={alert.message} />
         )}
-        <HeaderPage title="Toko Permai">
-          Anda memiliki <span className="text-slate-900 font-bold"> 4 Order diproses</span>, dan <span className="text-teal-500">19 Order selesai</span>!
-        </HeaderPage>
-        <div className="text-2xl mb-2">Halo, <span className="font-bold">Toko Permai</span></div>
-        <div className="mb-8 text-slate-400 font-light text-sm"></div>
+        {userData && (
+          <>
+            <HeaderPage title={`${userData.role} ${userData.name}`}>
+              Anda memiliki <span className="text-slate-900 font-bold"> 4 Order diproses</span>, dan <span className="text-teal-500">19 Order selesai</span>!
+            </HeaderPage>
+            <div className="text-2xl mb-2">Halo, <span className="font-bold">{userData.name}</span></div>
+            <div className="mb-8 text-slate-400 font-light text-sm"></div>
+          </>
+        )}
 
         <h2 className="font-semibold mb-4">Ringkasan Order Anda</h2>
         <div className="">

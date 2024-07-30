@@ -8,13 +8,13 @@ export const authHandler = async (username: string, password: string) => {
     username: username,
     password: password,
   });
-  const response = await axios.post(`${apiUrl}/admin/login`, data)
+  await axios.post(`${apiUrl}/admin/login`, data)
     .then((res) => {
       setToken(res.data)
+      return res;
     }).catch((error) => {
-
+      return error
     });
-  return response;
 };
 
 export const verifyToken = async (token: any) => {

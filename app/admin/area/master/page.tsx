@@ -205,7 +205,7 @@ export default function Home() {
           <Toast status={alert.status} message={alert.message} />
         )}
 
-        <Table action={true} header={tableHeader}>
+        <Table action={true} header={tableHeader} itemsPerPage={10}>
           {data &&
             data.map((item: any) => (
               <tr key={item.id}>

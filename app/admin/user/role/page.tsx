@@ -173,6 +173,7 @@ export default function Home() {
         <Table
           action={true}
           header={tableHeader}
+          itemsPerPage={10}
         >
           {data &&
             data.map((item: any) => (

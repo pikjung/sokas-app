@@ -36,6 +36,11 @@ const MultipleInput: React.FC<MultipleInputProps> = ({
         setDiscount(e)
     }
 
+    function updateQty(qty: number) {
+        setNumber(qty)
+        handleQuantityChange(produk.id, qty)
+    }
+
     return (
         <div className="flex gap-1 content-between items-center text-sm">
             <div className="truncate w-96 lg:w-full">{produk.name ? produk.name : produk.Product.name}</div>
@@ -49,6 +54,14 @@ const MultipleInput: React.FC<MultipleInputProps> = ({
                         text-center
                         "
                     value={number}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        const numericValue = Number(value);
+
+                        if (!isNaN(numericValue)) {
+                            updateQty(numericValue);
+                        }
+                    }}
                 />
                 <button className="join-item w-10 p-2 grow-0 text-indigo-500 font-bold" onClick={plusButton}>+</button>
             </div>

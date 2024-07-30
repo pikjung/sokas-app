@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Container from "../components/Container";
 import DropdownInput from "../components/inputs/DropdownInput";
+import DropdownInput_toko from "../components/inputs/DropdownInput_toko";
 import Card from "../components/Card";
 import Select from "../components/inputs/Select";
 import MultipleInput from "../components/inputs/MultipleInput";
@@ -48,8 +49,10 @@ const Home = () => {
   const [searchProduct, setSearchProduct] = useState<Product[]>([]);
   const [brand, setBrand] = useState<Brand[]>([]);
   const [tokos, setTokos] = useState<Toko[]>([]);
+  const [tokosFilter, setTokosFilter] = useState<Toko[]>(tokos);
   const [cart, setCart] = useState<Cart[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropdownToko, setShowDropdownToko] = useState(false);
   const [toast, setToast] = useState(false)
   const [storeId, setStoreId] = useState("");
   const [alert, setAlert] = useState({
@@ -60,26 +63,12 @@ const Home = () => {
     tokoStatus: false,
     cartStatus: false,
   })
+  const [selected_toko, setSelectedToko] = useState('')
 
   function handleBrandChanges(e: string) {
     setProduct([])
     getProduct(setProduct, e)
   }
-
-  function handleStoreChanges(e: string) {
-    setStoreId(e)
-  }
-
-
-  useEffect(() => {
-    getBrand(setBrand, setProduct);
-    getToko().then(data => {
-      setTokos(data)
-    })
-      .catch(error => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
 
   function handleProductChange(searchParams: string) {
     const searchWords = searchParams.toLowerCase().split(' ');
@@ -153,6 +142,32 @@ const Home = () => {
     }, 200);
   }
 
+  function handleChangeToko(id: string, name: string) {
+    setSelectedToko(name)
+    setStoreId(id)
+  }
+
+  function handleTokoChange(selectParam: string) {
+    if (!selectParam) {
+      setTokosFilter(tokos);
+      return;
+    }
+
+    const sToko = tokos.filter(t => t.name.toLowerCase().includes(selectParam.toLowerCase()));
+    setTokosFilter(sToko.length > 0 ? sToko : tokos);
+  }
+
+
+  function handleShowDropdownToko() {
+    setShowDropdownToko(true);
+  }
+
+  function handleHideDropdownToko() {
+    setTimeout(() => {
+      setShowDropdownToko(false);
+    }, 200);
+  }
+
   function handleDelete(value: string) {
     setCart(cart.filter(item => item.id !== value))
   }
@@ -173,7 +188,7 @@ const Home = () => {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      router.push('/login');
+      router.push('/admin/login');
     }
   }, [router])
 
@@ -187,6 +202,14 @@ const Home = () => {
 
   useEffect(() => {
     authenticate();
+    getBrand(setBrand, setProduct);
+    getToko().then(data => {
+      setTokos(data)
+      setTokosFilter(data)
+    })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
   }, [authenticate]);
 
   return (
@@ -201,12 +224,18 @@ const Home = () => {
       <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-4">
         <Card header="Buat Order">
           <div className="grid grid-cols-1 gap-4">
-            <Select id="toko" label="Pilih Toko" status={formStatus.tokoStatus} handleChange={handleStoreChanges} >
-              <option value="">-- Pilih Toko --</option>
-              {tokos.map((toko) => (
-                <option key={toko.id} value={toko.id}>{toko.name}</option>
-              ))}
-            </Select>
+            <input className={`w-full border-b p-2 transition-colors duration-300 ease-in-out ${formStatus.tokoStatus ? 'border-red-600 text-red-600 animate-shake' : 'border-gray-300 text-gray-900'}`} id="tokos" value={selected_toko} disabled />
+            <DropdownInput_toko
+              id="toko"
+              showDropdown={showDropdownToko}
+              handleShowDropdown={handleShowDropdownToko}
+              options={tokosFilter}
+              label="Pilih Toko"
+              handleChangeToko={handleChangeToko}
+              handleChange={handleTokoChange}
+              handleHideDropdown={handleHideDropdownToko}
+              placeholder="Pilih Toko"
+            />
             <Select id="brand" label="Pilih Brand" handleChange={handleBrandChanges} >
               {brand.map((item) => (
                 <option key={item.id} value={item.id}>{item.name}</option>
@@ -221,7 +250,7 @@ const Home = () => {
               handleChangeProduct={handleChangeProduct}
               handleChange={handleProductChange}
               handleHideDropdown={handleHideDropdown}
-              placeholder="TL-D 36W"
+              placeholder="Pilih Produk"
             />
             <div className={`grid grid-cols-1 gap-4 w-full p-4 ${formStatus.cartStatus ? 'border border-red-600 text-red-600 animate-shake' : 'border-gray-300 text-gray-900'}`}>
               {formStatus.cartStatus ? 'Mohon input item' : ''}

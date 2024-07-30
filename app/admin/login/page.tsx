@@ -45,22 +45,22 @@ export default function Home() {
         setToken(res.data.data.token)
         setAlert({
           status: 'success',
-          message: res.data.message
+          message: `${res.data.message}`
         })
         setToast(true)
         setTimeout(() => {
           setToast(false)
+          if (res.data.data.role === 'admin') {
+            router.push('/admin')
+          } else if (res.data.data.role === 'sales') {
+            router.push('/sales')
+          } else if (res.data.data.role === 'ssAdmin') {
+            router.push('/ssAdmin')
+          } else {
+            deleteToken()
+            router.push('/admin/login')
+          }
         }, 2000);
-        if (res.data.data.role === 'admin') {
-          router.push('/admin')
-        } else if (res.data.data.role === 'sales') {
-          router.push('/sales')
-        } else if (res.data.data.role === 'ssAdmin') {
-          router.push('/ssAdmin')
-        } else {
-          deleteToken()
-          router.push('/admin/login')
-        }
       }).catch((error) => {
         if (error.response.status === 401) {
           setAlert({
@@ -148,9 +148,6 @@ export default function Home() {
               />
             </TextInput>
             {isError && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            <div className="text-right underline mt-4 mb-4 text-slate-500">
-              Forgot Password?
-            </div>
             <button
               type="submit"
               className="rounded-xl w-full mt-6 flex justify-center items-center bg-indigo-600 p-2 text-white hover:bg-indigo-700"
