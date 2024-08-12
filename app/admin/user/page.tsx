@@ -48,7 +48,7 @@ interface FormData {
 }
 
 
-export default function Home() {
+export default function User() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",

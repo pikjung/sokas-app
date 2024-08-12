@@ -41,7 +41,7 @@ interface FormData {
   multi_id: string;
 }
 
-export default function Home() {
+export default function Address() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     tr_id: "",

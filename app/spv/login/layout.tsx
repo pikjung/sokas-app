@@ -1,6 +1,6 @@
 
-import Navbar from "../components/navbar/Navbar"
-import BottomNavigation from "../components/navbar/BottomNavigation"
+import Navbar from "../../components/navbar/Navbar"
+import BottomNavigation from "../../components/navbar/BottomNavigation"
 
 interface HomeLayoutProps {
   children: React.ReactNode
@@ -12,9 +12,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({
 }) => {
   return (
     <section>
-      <Navbar />
       {children}
-      <BottomNavigation />
     </section>
   );
 }

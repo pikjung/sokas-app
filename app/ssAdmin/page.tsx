@@ -2,7 +2,7 @@
 
 import Content from "./components/Content"
 import Navbar from "./components/Navbar"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Container from "./components/Container"
 
 import moment from "moment";
@@ -26,7 +26,7 @@ const formatDate = (isoString: string): string => {
 
 interface detailTransaction {
   created_at: Date,
-  discount: number,
+  discount: string,
   id: string,
   productId: string,
   qty: number,
@@ -47,6 +47,7 @@ export default function Home() {
   const [id, setId] = useState("");
   const [product, setProduct] = useState([])
   const [noted, setNoted] = useState("");
+  const [salesNote, setSalesNote] = useState("");
 
   useEffect(() => {
     const authenticate = async () => {
@@ -81,7 +82,7 @@ export default function Home() {
     setDetailTransaction([])
     setId("")
     setId(id)
-    await getSpesificTransaksi(setDetailTransaction, setProduct, id, brandId);
+    await getSpesificTransaksi(setDetailTransaction, setProduct, setSalesNote, id, brandId);
   }
 
   const handleQtyChange = (id: string, newQty: any) => {
@@ -193,7 +194,7 @@ export default function Home() {
                     Diskon:
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     id={`discount-${produk.id}`}
                     className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={produk.discount}
@@ -204,6 +205,16 @@ export default function Home() {
               {/* <div className="mx-auto"><button onClick={() => handleDelete(produk.id)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div> */}
             </div>
           ))}
+          <label htmlFor="">Sales Note: </label>
+          <textarea
+            className="w-full p-2 border bg-slate-100 border-slate-400 rounded"
+            name=""
+            id=""
+            readOnly
+            value={salesNote}
+          >
+          </textarea>
+          <label htmlFor="">SS Note: </label>
           <textarea
             className="w-full p-2 border border-slate-400 rounded"
             placeholder="input note disini"

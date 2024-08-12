@@ -9,7 +9,7 @@ import { verifyToken } from '../handler/authHandler'
 import { getToken } from '../utils/getToken'
 import Toast from "../components/Toast"
 
-export default function Home() {
+export default function Settings() {
   const router = useRouter();
   const [toast, setToast] = useState(false)
   const [alert, setAlert] = useState({

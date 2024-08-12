@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
 import DropdownInput from "../components/inputs/DropdownInput";
 import DropdownInput_toko from "../components/inputs/DropdownInput_toko";
@@ -8,13 +8,11 @@ import Card from "../components/Card";
 import Select from "../components/inputs/Select";
 import MultipleInput from "../components/inputs/MultipleInput";
 import HeaderPage from "../components/HeaderPage";
-import Toast from "../../admin/components/Toast";
 
 import { addProductToCart, getBrand, getProduct, getToko } from "../handler/orderHandler";
 
-import { getToken } from "../../admin/utils/getToken";
-import { useRouter } from "next/navigation";
-import { verifyToken } from "../handler/authHandler";
+import useSales from "../../hooks/salesUseAuth"
+import { useNotification } from '../../context/NotificationContext';
 
 interface Product {
   id: string,
@@ -27,7 +25,7 @@ interface Cart {
   name: string,
   value: string,
   quantity: number,
-  discount: number
+  discount: string
 }
 
 interface Brand {
@@ -42,23 +40,18 @@ interface Toko {
 
 
 const Home = () => {
-
-  const router = useRouter()
+  const { alert, toast, setAlert, setToast } = useNotification();
+  const { authenticate } = useSales()
 
   const [product, setProduct] = useState<Product[]>([]);
   const [searchProduct, setSearchProduct] = useState<Product[]>([]);
   const [brand, setBrand] = useState<Brand[]>([]);
   const [tokos, setTokos] = useState<Toko[]>([]);
-  const [tokosFilter, setTokosFilter] = useState<Toko[]>(tokos);
+  const [tokosFilter, setTokosFilter] = useState<Toko[]>([]);
   const [cart, setCart] = useState<Cart[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showDropdownToko, setShowDropdownToko] = useState(false);
-  const [toast, setToast] = useState(false)
   const [storeId, setStoreId] = useState("");
-  const [alert, setAlert] = useState({
-    status: "",
-    message: ""
-  })
   const [formStatus, setFormStatus] = useState({
     tokoStatus: false,
     cartStatus: false,
@@ -126,7 +119,7 @@ const Home = () => {
   function handleChangeProduct(selectParam: string) {
     const sproduct = product.filter(p => p.value.includes(selectParam))
     if (cart.filter(item => item.value === selectParam).length === 0) {
-      const qproduct = { ...sproduct[0], quantity: 1, discount: 0 }
+      const qproduct = { ...sproduct[0], quantity: 1, discount: '0' }
       setCart([...cart, qproduct])
     }
     setShowDropdown(!showDropdown)
@@ -172,31 +165,12 @@ const Home = () => {
     setCart(cart.filter(item => item.id !== value))
   }
 
-  const authenticate = useCallback(async () => {
-    if (!getToken()) {
-      router.push('/admin/login');
-      return null
-    }
-    const authorization = await verifyToken(getToken());
-
-    if (authorization.success === false) {
-      setAlert({
-        status: "warning",
-        message: "You are not authorized"
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      router.push('/admin/login');
-    }
-  }, [router])
 
   const handleQuantityChange = (id: string, quantity: number) => {
     setCart(cart.map(item => item.id === id ? { ...item, quantity: quantity } : item));
   };
 
-  const handleDiscountChange = (id: string, discount: number) => {
+  const handleDiscountChange = (id: string, discount: string) => {
     setCart(cart.map(item => item.id === id ? { ...item, discount: discount } : item));
   };
 
@@ -214,9 +188,6 @@ const Home = () => {
 
   return (
     <Container flex={false} wrap={false}>
-      {toast && (
-        <Toast status={alert.status} message={alert.message} />
-      )}
       <HeaderPage title="Form Sales Order KAS">
         Isi form sesuai dengan produk yang akan anda beli
       </HeaderPage>

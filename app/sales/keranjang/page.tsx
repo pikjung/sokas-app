@@ -1,17 +1,16 @@
 'use client'
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
 import Card from "../components/Card";
 import MultipleInput from "../components/inputs/MultipleInput";
 import HeaderPage from "../components/HeaderPage";
-import Toast from "../../admin/components/Toast";
 
 import { getKeranjang, updateKeranjang, updateDiscount, deleteKeranjang, checkOutKeranjang } from "../handler/keranjangHandler";
 
-import { getToken } from "../../admin/utils/getToken";
-import { useRouter } from "next/navigation";
-import { verifyToken } from "../handler/authHandler";
+import { useNotification } from "@/app/context/NotificationContext";
+import useSalesAuth from "@/app/hooks/salesUseAuth";
+import useFetchData from "@/app/admin/hooks/useFetchData";
 
 interface Store {
   id: string;
@@ -50,60 +49,10 @@ interface Item {
 
 const Home = () => {
 
-  const router = useRouter()
-
-  const [toast, setToast] = useState(false)
-  const [alert, setAlert] = useState({
-    status: "",
-    message: ""
-  })
+  const { setAlert, setToast, showNotification } = useNotification();
+  const { authenticate } = useSalesAuth();
   const [keranjang, setKeranjang] = useState<Item[]>([]);
-
-  const authenticate = useCallback(async () => {
-    if (!getToken()) {
-      router.push('/admin/login');
-      return null
-    }
-    const authorization = await verifyToken(getToken());
-
-    if (authorization.success === false) {
-      setAlert({
-        status: "warning",
-        message: "You are not authorized"
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      router.push('/admin/login');
-    }
-  }, [router])
-
-  const groupedKeranjang = keranjang.reduce((acc, item) => {
-    const storeId = item.storeId;
-    const storeName = item.Store.name;
-    const brandId = item.Product.Brand.id;
-
-    if (!acc[storeId]) {
-      acc[storeId] = {
-        storeId: storeId,
-        storeName: storeName,
-        brands: {}
-      };
-    }
-
-    if (!acc[storeId].brands[brandId]) {
-      acc[storeId].brands[brandId] = {
-        brandId: brandId,
-        brandName: item.Product.Brand.name,
-        color: item.Product.Brand.color,
-        items: []
-      };
-    }
-
-    acc[storeId].brands[brandId].items.push(item);
-    return acc;
-  }, {} as Record<string, {
+  const [groupedKeranjang, setGroupedKeranjang] = useState<Record<string, {
     storeId: string;
     storeName: string;
     brands: Record<string, {
@@ -111,75 +60,119 @@ const Home = () => {
       brandName: string;
       color: string;
       items: Item[];
+      salesNote: string;
     }>
-  }>);
+  }>>({});
+
+  const handleSalesNoteChange = (storeId: string, brandId: string, value: string) => {
+    setGroupedKeranjang(prevState => {
+      const updatedState = { ...prevState };
+      updatedState[storeId].brands[brandId].salesNote = value;
+      return updatedState;
+    });
+  };
 
   const handleDelete = (id: string) => {
     const updateKeranjang = keranjang.filter(item => item.id !== id);
     setKeranjang(updateKeranjang);
-    // console.log(keranjang)
-    deleteKeranjang(id)
-  }
+    deleteKeranjang(id);
+  };
 
   const handleQuantityChange = (id: string, qty: number) => {
-    updateKeranjang(id, qty)
-  }
+    updateKeranjang(id, qty);
+  };
 
-  const handleDiscountChange = (id: string, discount: number) => {
-    updateDiscount(id, discount)
-  }
-
-
+  const handleDiscountChange = (id: string, discount: string) => {
+    updateDiscount(id, discount);
+  };
 
   const checkOut = async () => {
     if (keranjang.length === 0) {
       setAlert({
         status: "Success",
         message: "Keranjang anda kosong"
-      })
-      setToast(true)
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      return false
+      return false;
     }
-    const checkOutCart: any = await checkOutKeranjang(groupedKeranjang)
+    const checkOutCart: any = await checkOutKeranjang(groupedKeranjang);
     if (checkOutCart) {
       if (checkOutCart.status === "success") {
-        setKeranjang([])
+        setKeranjang([]);
 
         setAlert({
           status: "Success",
           message: "Produk berhasil di checkout"
-        })
-        setToast(true)
+        });
+        setToast(true);
         setTimeout(() => {
-          setToast(false)
+          setToast(false);
         }, 2000);
       }
     } else {
       setAlert({
         status: "Success",
         message: "Ada error yang tidak diketahui"
-      })
-      setToast(true)
+      });
+      setToast(true);
       setTimeout(() => {
-        setToast(false)
+        setToast(false);
       }, 2000);
-      return false
+      return false;
     }
-  }
+  };
 
   useEffect(() => {
-    getKeranjang(setKeranjang)
     authenticate();
+    getKeranjang(setKeranjang);
   }, [authenticate]);
+
+  useEffect(() => {
+    const initialGroupedKeranjang = keranjang.reduce((acc, item) => {
+      const storeId = item.storeId;
+      const storeName = item.Store.name;
+      const brandId = item.Product.Brand.id;
+
+      if (!acc[storeId]) {
+        acc[storeId] = {
+          storeId: storeId,
+          storeName: storeName,
+          brands: {}
+        };
+      }
+
+      if (!acc[storeId].brands[brandId]) {
+        acc[storeId].brands[brandId] = {
+          brandId: brandId,
+          brandName: item.Product.Brand.name,
+          color: item.Product.Brand.color,
+          items: [],
+          salesNote: '' // Menambahkan properti salesNote
+        };
+      }
+
+      acc[storeId].brands[brandId].items.push(item);
+      return acc;
+    }, {} as Record<string, {
+      storeId: string;
+      storeName: string;
+      brands: Record<string, {
+        brandId: string;
+        brandName: string;
+        color: string;
+        items: Item[];
+        salesNote: string; // Menambahkan tipe salesNote
+      }>
+    }>);
+
+    setGroupedKeranjang(initialGroupedKeranjang);
+  }, [keranjang]);
 
   return (
     <Container flex={false} wrap={false}>
-      {toast && (
-        <Toast status={alert.status} message={alert.message} />
-      )}
       <HeaderPage title="Keranjang">
         Lihat kembali produk anda sebelum check out
       </HeaderPage>
@@ -204,6 +197,13 @@ const Home = () => {
                         handleDiscountChange={handleDiscountChange}
                       />
                     ))}
+                  </div>
+                  <div className="mt-2 mb-4">
+                    <label htmlFor="">Sales Note</label>
+                    <textarea name="" id="" className="w-full border"
+                      value={groupedKeranjang[storeId].brands[brandId].salesNote}
+                      onChange={(e) => handleSalesNoteChange(storeId, brandId, e.target.value)}
+                    ></textarea>
                   </div>
                 </div>
               ))}

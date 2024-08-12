@@ -5,172 +5,46 @@ import Container from "../../components/Container"
 import Navbar from "../../components/Navbar"
 import Content from "../../components/Content"
 import Table from "../../components/Table"
-import Toast from "../../components/Toast"
 import Action from "../../components/Action"
 import Button from "../../components/Button"
 import Modal from "../../components/Modal"
 import TextInput from "../../components/input/TextInput"
 import SelectInput from "../../components/input/SelectInput"
 
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
-import { verifyToken } from '../../handler/authHandler'
-import { getToken } from '../../utils/getToken'
+import { useEffect, useState } from 'react'
 
 import {
-  fetchData,
   buttonHandler,
-  formHandler,
-  userFetchData,
   deleteHandler,
   editHandler,
   deleteMasterArea,
+  handlePostData
 } from '../../handler/masterAreaHandler'
 import { IoCreateOutline, IoMapSharp } from "react-icons/io5"
 import { FaRegEdit } from "react-icons/fa"
 import { GoTrash } from "react-icons/go"
 import { LiaPaperPlane } from "react-icons/lia"
+import { useNotification } from "@/app/context/NotificationContext"
+import { useFormContext } from "../../hooks/FormContext"
+import useAdminAuth from "@/app/hooks/adminUseAuth"
+import useFetchData from "../../hooks/useFetchData"
+import usePostData from "../../hooks/usePostData"
 
-interface FormData {
-  name: string,
-  spvId: string,
-}
-
-export default function Home() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    spvId: "",
-  });
+export default function MasterArea() {
   const [id, setId] = useState("");
   const [header, setHeader] = useState("Tambah Area");
-  const [toast, setToast] = useState(false)
-  const [alert, setAlert] = useState({
-    status: "",
-    message: ""
-  })
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState([])
-  const [userData, setuserData] = useState([])
-
   const tableHeader = ['Area', 'PIC']
 
-  const router = useRouter()
 
-  const authenticate = useCallback(async () => {
-    if (!getToken()) {
-      router.push('/admin/login');
-      return null;
-    }
-    const authorization = await verifyToken(getToken());
-
-    if (authorization.success === false) {
-      setAlert({
-        status: 'warning',
-        message: 'You are not authorized'
-      });
-      setToast(true);
-      setTimeout(() => {
-        setToast(false);
-      }, 2000);
-      router.push('/admin/login');
-    }
-  }, [router]);
-
-  //ambil data area
-  const getMasterAreaData = useCallback(async () => {
-    const data: any = await fetchData();
-    if (data.success) {
-      setData(data.data)
-    }
-
-    if (!data.success) {
-      setAlert({
-        status: "error",
-        message: data.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }, [authenticate]);
-
-  //ambil data role
-  const getUserData = useCallback(async () => {
-    const data: any = await userFetchData();
-    if (data.success) {
-      setuserData(data.data)
-    }
-
-    if (!data.success) {
-      setAlert({
-        status: "error",
-        message: data.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }, [authenticate]);
-
-  //create dan update data user
-  const postData = async (e: any) => {
-    const dataform: any = await formHandler(e, formMethod, formData, id);
-    if (dataform.success === true) {
-      setAlert({
-        status: "success",
-        message: dataform.data.message
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      getMasterAreaData()
-    }
-
-    if (dataform.success === false) {
-      setAlert({
-        status: "error",
-        message: dataform.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }
-
-  //Hapus data
-  const deleteData = async () => {
-    const dataform: any = await deleteMasterArea(id)
-    if (dataform.success === true) {
-      setAlert({
-        status: "success",
-        message: dataform.data.message
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      getMasterAreaData()
-    }
-
-    if (!dataform.success) {
-      setAlert({
-        status: "error",
-        message: dataform.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }
+  const { authenticate } = useAdminAuth()
+  const { showNotification } = useNotification()
+  const { formData, setFormData } = useFormContext()
+  const { data: masterData, fetchData: fetchMasterData } = useFetchData('/admin/masterarea', authenticate, showNotification)
+  const { data: userData, fetchData: fetchUserData } = useFetchData('/admin/users', authenticate, showNotification)
+  const { postData } = usePostData("/admin/masterarea", authenticate, showNotification)
+  const { putData } = usePostData(`/admin/masterarea/${id}`, authenticate, showNotification)
+  const { deleteData } = usePostData(`/admin/masterarea/${id}`, authenticate, showNotification)
 
   //handle formData
   const handleChange = (event: any) => {
@@ -194,20 +68,16 @@ export default function Home() {
 
   useEffect(() => {
     authenticate()
-    getMasterAreaData()
-    getUserData()
-  }, [authenticate, getMasterAreaData, getUserData])
+    fetchMasterData()
+    fetchUserData()
+  }, [authenticate, fetchMasterData, fetchUserData]);
   return (
     <Container>
       <Navbar />
       <Content header="Master Area" desc="Kelola Master Area Sales!" action={button}>
-        {toast && (
-          <Toast status={alert.status} message={alert.message} />
-        )}
-
         <Table action={true} header={tableHeader} itemsPerPage={10}>
-          {data &&
-            data.map((item: any) => (
+          {masterData &&
+            masterData.map((item: any) => (
               <tr key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.spv?.name}</td>
@@ -218,7 +88,7 @@ export default function Home() {
                     </button>
                     <button
                       className="border-0"
-                      onClick={() => deleteHandler(item, setFormData, setId)}
+                      onClick={() => deleteHandler(item, setId)}
                     >
                       <GoTrash size={20} />
                     </button>
@@ -229,7 +99,7 @@ export default function Home() {
         </Table>
       </Content>
       <Modal header={header} idName="formModal">
-        <form onSubmit={(e) => postData(e)}>
+        <form onSubmit={(e) => handlePostData(e, formMethod, postData, putData, formData, fetchMasterData)}>
           <TextInput label="Master Area Name" icon={IoMapSharp}>
             <input
               name="name"
@@ -257,7 +127,7 @@ export default function Home() {
           type="danger"
           name="Hapus"
           icon={GoTrash}
-          buttonHandler={() => deleteData()}
+          buttonHandler={() => deleteMasterArea(deleteData, fetchMasterData)}
         ></Button>
       </Modal>
     </Container>

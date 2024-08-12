@@ -41,7 +41,7 @@ interface FormData {
   brandId: string;
 }
 
-export default function Home() {
+export default function Product() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     value: "",

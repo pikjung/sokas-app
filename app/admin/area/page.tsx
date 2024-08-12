@@ -5,179 +5,49 @@ import Container from "../components/Container"
 import Navbar from "../components/Navbar"
 import Content from "../components/Content"
 import Table from "../components/Table"
-import Toast from "../components/Toast"
 import Action from "../components/Action"
 import Button from "../components/Button"
 import Modal from "../components/Modal"
 import TextInput from "../components/input/TextInput"
 import SelectInput from "../components/input/SelectInput"
 
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
-import { verifyToken } from '../handler/authHandler'
-import { getToken } from '../utils/getToken'
+import { useEffect, useState } from 'react'
 import Link from "next/link"
 
 import {
-  fetchData,
   buttonHandler,
-  formHandler,
-  fetchSideData,
   deleteHandler,
   editHandler,
+  handlePostData,
   deleteArea
 } from '../handler/areaHandler'
 import { IoCreateOutline, IoMapSharp } from "react-icons/io5"
 import { FaRegEdit } from "react-icons/fa"
 import { GoTrash } from "react-icons/go"
 import { LiaPaperPlane } from "react-icons/lia"
+import { useNotification } from "@/app/context/NotificationContext"
+import useAdminAuth from "@/app/hooks/adminUseAuth"
+import { useFormContext } from "../hooks/FormContext"
+import usePostData from "../hooks/usePostData"
+import useFetchData from "../hooks/useFetchData"
 
-interface FormData {
-  name: string,
-  masterAreaId: string,
-  sales_id: string,
-  sales_support_id: string
-}
 
-export default function Home() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    masterAreaId: "",
-    sales_id: "",
-    sales_support_id: ""
-  });
+export default function Area() {
   const [id, setId] = useState("");
+  const { formData, setFormData } = useFormContext()
+  const { showNotification } = useNotification()
+  const { authenticate } = useAdminAuth();
+  const { data: masterData, fetchData: fetchMasterData } = useFetchData('/admin/masterarea', authenticate, showNotification)
+  const { data: data, fetchData: fetchData } = useFetchData('/admin/area', authenticate, showNotification)
+  const { data: userData, fetchData: fetchUserData } = useFetchData('/admin/users', authenticate, showNotification)
+  const { postData } = usePostData("/admin/area", authenticate, showNotification)
+  const { putData } = usePostData(`/admin/area/${id}`, authenticate, showNotification)
+  const { deleteData } = usePostData(`/admin/area/${id}`, authenticate, showNotification)
   const [header, setHeader] = useState("Tambah Area");
-  const [toast, setToast] = useState(false)
-  const [alert, setAlert] = useState({
-    status: "",
-    message: ""
-  })
   const [formMethod, setFormMethod] = useState("create");
-  const [data, setData] = useState([])
-  const [masterAreaData, setMasterAreaData] = useState([])
-  const [userData, setUserData] = useState([])
 
   const tableHeader = ['Area', 'Master Area', 'Sales', 'SS']
 
-  const router = useRouter()
-
-  const authenticate = useCallback(async () => {
-    if (!getToken()) {
-      router.push('/admin/login');
-      return null
-    }
-    const authorization = await verifyToken(getToken());
-
-    if (authorization.success === false) {
-      setAlert({
-        status: "warning",
-        message: "You are not authorized"
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      router.push('/admin/login');
-    }
-  }, [router])
-
-  //ambil data area
-  const getAreaData = useCallback(async () => {
-    const data: any = await fetchData();
-    if (data.success) {
-      setData(data.data)
-    }
-
-    if (!data.success) {
-      setAlert({
-        status: "error",
-        message: data.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }, [authenticate])
-
-  //ambil data role
-  const getSideData = useCallback(async () => {
-    const data: any = await fetchSideData();
-    if (data.success) {
-      setMasterAreaData(data.masterAreaData)
-      setUserData(data.userData)
-    }
-
-    if (!data.success) {
-      setAlert({
-        status: "error",
-        message: data.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }, [authenticate])
-
-  //create dan update data user
-  const postData = async (e: any) => {
-    const dataform: any = await formHandler(e, formMethod, formData, id);
-    if (dataform.success === true) {
-      setAlert({
-        status: "success",
-        message: dataform.data.message
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      getAreaData()
-    }
-
-    if (dataform.success === false) {
-      setAlert({
-        status: "error",
-        message: dataform.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }
-
-  //Hapus data
-  const deleteData = async () => {
-    const dataform: any = await deleteArea(id)
-    if (dataform.success === true) {
-      setAlert({
-        status: "success",
-        message: dataform.data.message
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      getAreaData()
-    }
-
-    if (!dataform.success) {
-      setAlert({
-        status: "error",
-        message: dataform.data.error
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      authenticate()
-    }
-  }
 
   //handle formData
   const handleChange = (event: any) => {
@@ -208,16 +78,14 @@ export default function Home() {
 
   useEffect(() => {
     authenticate()
-    getAreaData()
-    getSideData()
-  }, [authenticate, getAreaData, getSideData]);
+    fetchData()
+    fetchMasterData()
+    fetchUserData()
+  }, [authenticate, fetchData, fetchUserData, fetchMasterData]);
   return (
     <Container>
       <Navbar />
       <Content header="Area" desc="Kelola Area Sales!" action={button}>
-        {toast && (
-          <Toast status={alert.status} message={alert.message} />
-        )}
 
         <Table action={true} header={tableHeader} itemsPerPage={10}>
           {data &&
@@ -234,7 +102,7 @@ export default function Home() {
                     </button>
                     <button
                       className="border-0"
-                      onClick={() => deleteHandler(item, setFormData, setId)}
+                      onClick={() => deleteHandler(item, setId)}
                     >
                       <GoTrash size={20} />
                     </button>
@@ -245,7 +113,7 @@ export default function Home() {
         </Table>
       </Content>
       <Modal header={header} idName="formModal">
-        <form onSubmit={(e) => postData(e)}>
+        <form onSubmit={(e) => handlePostData(e, formData, postData, putData, formMethod, fetchData)}>
           <TextInput label="Nama Area" icon={IoMapSharp}>
             <input
               name="name"
@@ -258,7 +126,7 @@ export default function Home() {
           </TextInput>
           <SelectInput label="Sales" name="sales_id" data={userData} handleChange={handleChange} value={formData.sales_id} required={true} />
           <SelectInput label="SS" name="sales_support_id" data={userData} handleChange={handleChange} value={formData.sales_support_id} required={true} />
-          <SelectInput label="MasterArea" name="masterAreaId" data={masterAreaData} handleChange={handleChange} value={formData.masterAreaId} required={true} />
+          <SelectInput label="MasterArea" name="masterAreaId" data={masterData} handleChange={handleChange} value={formData.masterAreaId} required={true} />
           <button
             type="submit"
             className="rounded-xl float-right mt-6 gap-2 px-4 my-auto flex bg-indigo-600 p-2 text-white hover:bg-indigo-700"
@@ -275,7 +143,7 @@ export default function Home() {
           type="danger"
           name="Hapus"
           icon={GoTrash}
-          buttonHandler={() => deleteData()}
+          buttonHandler={() => deleteArea(id, deleteData, fetchData)}
         ></Button>
       </Modal>
     </Container>

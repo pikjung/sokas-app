@@ -88,22 +88,29 @@ export default function Home() {
         <Card header="Transaksi sudah di proses">
           <ul className="divide-y divide-slate-200">
             {transaksi.map((item: any) => (
-              <li className="flex py-4 first:pt-0 last:pb-0" key={item.id}>
-                <p className={`text-${item.Brand.color} w-24`}>{item.Brand.name}</p>
-                <p className="flex-1 flex items-center justify-center font-bold">{item.Store.name}</p>
-                <div className="overflow-hidden flex-1">
-                  <p className="text-sm font-medium text-slate-900">{item.order_no}</p>
-                  <p className="text-sm text-slate-500 truncate">Order date: {formatDate(item.created_at)}</p>
+              <li className="flex-wrap py-4 first:pt-0 last:pb-0" key={item.id}>
+                <div className="flex">
+                  <p className={`text-${item.Brand.color} w-24`}>{item.Brand.name}</p>
+                  <p className="flex-1 flex items-center justify-center font-bold">{item.Store.name}</p>
+                  <div className="overflow-hidden flex-1">
+                    <p className="text-sm font-medium text-slate-900">{item.order_no}</p>
+                    <p className="text-sm text-slate-500 truncate">Order date: {formatDate(item.created_at)}</p>
+                  </div>
+                  <span className={`flex-none rounded-lg py-1 px-2 items-center justify-center text-sm ${checkConfirm(item.processed_at, item.isCancel) ? "text-green-700" : "text-red-700"}`}>
+                    {checkConfirm(item.processed_at, item.isCancel) ? "Confirm" : "Cancel"}
+                  </span>
+                  <div className="flex-1 justify-center items-center">
+                    <button onClick={e => handleDetailTransaction(item.id)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-teal-600 hover:bg-teal-700 text-white text-lg shadow-lg">
+                      <FaEye />
+                      Detail
+                    </button>
+                  </div>
                 </div>
-                <span className={`flex-none rounded-lg py-1 px-2 items-center justify-center text-sm ${checkConfirm(item.processed_at, item.isCancel) ? "text-green-700" : "text-red-700"}`}>
-                  {checkConfirm(item.processed_at, item.isCancel) ? "Confirm" : "Cancel"}
-                </span>
-                <p className="flex-1 justify-center items-center">Noted: {item.noted}</p>
-                <div className="flex-1 justify-center items-center">
-                  <button onClick={e => handleDetailTransaction(item.id)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-teal-600 hover:bg-teal-700 text-white text-lg shadow-lg">
-                    <FaEye />
-                    Detail
-                  </button>
+                <div className="flex flex-nowrap mt-2">
+                  <div className="flex-1">Sales Note: <p className="font-semibold text-slate-600">{item.salesNote}</p></div>
+                  <div className="flex-1">
+                    SS Note: <p className="font-semibold text-slate-600">{item.noted}</p>
+                  </div>
                 </div>
               </li>
             ))}
@@ -136,7 +143,7 @@ export default function Home() {
                     Discount:
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     id={`discount-${produk.id}`}
                     className="w-20 lg:w-24 px-2 py-1 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={produk.discount}

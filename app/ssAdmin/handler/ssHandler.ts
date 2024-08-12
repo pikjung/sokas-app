@@ -28,6 +28,7 @@ export const getTransaksiBySS = async (setTransaksi: any) => {
 export const getSpesificTransaksi = async (
   setDetailTransaction: any,
   setProduct: any,
+  setSalesNote: any,
   id: string,
   brandId: string
 ) => {
@@ -39,6 +40,8 @@ export const getSpesificTransaksi = async (
     });
     setDetailTransaction(response.data.data.detail)
     setProduct(response.data.data.product)
+    setSalesNote("")
+    setSalesNote(response.data.data.transaction.salesNote)
     const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
     if (formModal) {
       formModal.showModal();

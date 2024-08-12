@@ -50,7 +50,7 @@ interface FormData {
   no_telp: string;
 }
 
-export default function Home() {
+export default function Store() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     lat: "",

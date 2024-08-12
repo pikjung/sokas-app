@@ -35,7 +35,7 @@ export const updateKeranjang = async (cartId: string, qty: number) => {
   }
 }
 
-export const updateDiscount = async (cartId: string, discount: number) => {
+export const updateDiscount = async (cartId: string, discount: string) => {
   try {
     const response = await axios.put(`${apiUrl}/sales/cart/discount`, { cartId: cartId, discount: discount }, {
       headers: {

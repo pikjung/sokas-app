@@ -7,7 +7,7 @@ interface MultipleInputProps {
     produk: any;
     handleDelete: (value: string) => void;
     handleQuantityChange: (id: string, quantity: number) => void;
-    handleDiscountChange: (id: string, discount: number) => void;
+    handleDiscountChange: (id: string, discount: string) => void;
 }
 
 const MultipleInput: React.FC<MultipleInputProps> = ({
@@ -31,7 +31,7 @@ const MultipleInput: React.FC<MultipleInputProps> = ({
         handleQuantityChange(produk.id, number + 1)
     }
 
-    function handleDiscountChangeOnClick(e: number) {
+    function handleDiscountChangeOnClick(e: string) {
         handleDiscountChange(produk.id, e)
         setDiscount(e)
     }
@@ -42,43 +42,44 @@ const MultipleInput: React.FC<MultipleInputProps> = ({
     }
 
     return (
-        <div className="flex gap-1 content-between items-center text-sm">
-            <div className="truncate w-96 lg:w-full">{produk.name ? produk.name : produk.Product.name}</div>
-            <div className="join join-horizontal border">
-                <button className="join-item w-10 p-2 text-indigo-500 font-bold" onClick={minButton}>-</button>
-                <input
-                    type="number"
-                    className="
+        <div className="flex gap-1 flex-wrap content-between items-center text-sm">
+            <div className="truncate w-full">{produk.name ? produk.name : produk.Product.name}</div>
+            <div className="flex gap-2">
+                <div className="join join-horizontal border">
+                    <button className="join-item w-10 p-2 text-indigo-500 font-bold" onClick={minButton}>-</button>
+                    <input
+                        type="number"
+                        className="
                         w-full
                         join-item
                         text-center
                         "
-                    value={number}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        const numericValue = Number(value);
+                        value={number}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            const numericValue = Number(value);
 
-                        if (!isNaN(numericValue)) {
-                            updateQty(numericValue);
-                        }
-                    }}
-                />
-                <button className="join-item w-10 p-2 grow-0 text-indigo-500 font-bold" onClick={plusButton}>+</button>
-            </div>
-            <div className="join join-horizontal border h-full flex items-center">
-                <input
-                    type="number"
-                    className="
+                            if (!isNaN(numericValue)) {
+                                updateQty(numericValue);
+                            }
+                        }}
+                    />
+                    <button className="join-item w-10 p-2 grow-0 text-indigo-500 font-bold" onClick={plusButton}>+</button>
+                </div>
+                <div className="join join-horizontal border p-2 h-full flex items-center">
+                    <input
+                        type="text"
+                        className="
                         join-item
                         text-center
                         w-full
                         "
-                    value={discount}
-                    onChange={(e) => handleDiscountChangeOnClick(Number(e.target.value))}
-                /> <p className="h-full flex items-center justify-center">%</p>
+                        value={discount}
+                        onChange={(e) => handleDiscountChangeOnClick(e.target.value)}
+                    />
+                </div>
+                <div className="mx-auto lg:w-24 border p-2 h-full "><button onClick={() => handleDelete(produk.id)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div>
             </div>
-
-            <div className="mx-auto lg:w-24"><button onClick={() => handleDelete(produk.id)} className=" hover:text-rose-600 p-2 text-rose-500 rounded-md"><FaTrash /></button></div>
         </div>
     )
 }

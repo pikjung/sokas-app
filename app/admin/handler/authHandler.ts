@@ -30,13 +30,13 @@ export const verifyToken = async (token: any) => {
     }
     return {
       success: true,
-      data: response.data
+      data: response.data,
     };
   } catch (error: any) {
-    deleteToken()
+    // deleteToken()
     return {
       success: false,
-      error: error.response.data
+      error: error.response
     };
   }
 };

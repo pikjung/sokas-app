@@ -34,7 +34,7 @@ interface FormData {
   value: string
 }
 
-export default function Home() {
+export default function Brand() {
   const router = useRouter();
   const [toast, setToast] = useState(false)
   const [alert, setAlert] = useState({
