@@ -8,10 +8,12 @@ import Container from "./components/Container"
 import HeaderPage from "./components/HeaderPage"
 import Card from "./components/Card";
 import useSalesAuth from "../hooks/salesUseAuth";
+import useWebSocket from "../hooks/useWebsocket";
 
 export default function Home() {
   const { authenticate, userData } = useSalesAuth();
 
+  useWebSocket(userData?.user_id)
 
   useEffect(() => {
     authenticate();

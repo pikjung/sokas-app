@@ -13,12 +13,12 @@ import { verifyToken } from '../handler/authHandler'
 import { getHistoryBySS, getSpesificTransaksi } from "../handler/historyHandler"
 import { getToken } from '../utils/getToken'
 import Toast from "../components/Toast"
+import useSSAdminAuth from "@/app/hooks/ssAdminUseAuth"
 
 import Card from "../../components/Card"
-import { FaCheck, FaEye, FaTrash } from "react-icons/fa"
+import { FaEye } from "react-icons/fa"
 
 import Modal from "../components/Modal"
-import { LiaPaperPlane } from "react-icons/lia"
 
 const formatDate = (isoString: string): string => {
   return moment(isoString).format('DD-MM-YYYY');
@@ -80,9 +80,6 @@ export default function Home() {
 
   return (
     <Container>
-      {toast && (
-        <Toast status={alert.status} message={alert.message} />
-      )}
       <Navbar />
       <Content header="History Pesanan" desc="Lihat riwayat pesanan!">
         <Card header="Transaksi sudah di proses">

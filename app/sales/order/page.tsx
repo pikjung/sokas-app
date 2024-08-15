@@ -40,7 +40,7 @@ interface Toko {
 
 
 const Home = () => {
-  const { alert, toast, setAlert, setToast } = useNotification();
+  const { setAlert, setToast } = useNotification();
   const { authenticate } = useSales()
 
   const [product, setProduct] = useState<Product[]>([]);

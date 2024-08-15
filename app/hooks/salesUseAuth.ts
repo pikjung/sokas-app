@@ -6,6 +6,7 @@ import { verifyToken } from '@/app/sales/handler/authHandler';
 import { useNotification } from '@/app/context/NotificationContext';
 
 interface UserData {
+  user_id: string;
   name: string;
   role: string;
 }
@@ -33,8 +34,8 @@ const useSalesAuth = () => {  // Nama hook diperbaiki
           router.push('/admin/login');
         }
 
-        const { name, role } = res.data.data;
-        setUserData({ name: name, role: role });
+        const { user_id, name, role } = res.data.data;
+        setUserData({ user_id: user_id, name: name, role: role });
       })
 
   }, [router, showNotification, setUserData]);

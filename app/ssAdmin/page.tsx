@@ -1,23 +1,19 @@
 'use client'
 
+import { useState, useEffect } from "react"
+import moment from "moment";
 import Content from "./components/Content"
 import Navbar from "./components/Navbar"
-import { useRef, useState } from "react"
 import Container from "./components/Container"
-
-import moment from "moment";
-
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { verifyToken } from './handler/authHandler'
-import { getTransaksiBySS, getSpesificTransaksi, confirmTransaksi, cancelTransaksi } from "./handler/ssHandler"
-import { getToken } from './utils/getToken'
-import Toast from "./components/Toast"
-
-import Card from "../components/Card"
-import { FaCheck, FaTrash } from "react-icons/fa"
-
 import Modal from "./components/Modal"
+import Card from "../components/Card"
+
+import { getTransaksiBySS, getSpesificTransaksi, confirmTransaksi, cancelTransaksi } from "./handler/ssHandler"
+import useSSAdminAuth from "@/app/hooks/ssAdminUseAuth"
+import useWebSocket, { sendMessageToUser } from "../hooks/useWebsocket";
+import { useNotification } from "../context/NotificationContext";
+
+import { FaCheck } from "react-icons/fa"
 import { LiaPaperPlane } from "react-icons/lia"
 
 const formatDate = (isoString: string): string => {
@@ -35,52 +31,30 @@ interface detailTransaction {
 }
 
 export default function Home() {
+  const { authenticate, userData } = useSSAdminAuth()
 
-  const router = useRouter();
-  const [toast, setToast] = useState(false)
-  const [alert, setAlert] = useState({
-    status: "",
-    message: ""
-  })
+  useWebSocket(userData?.user_id)
+
+  const { setAlert, setToast } = useNotification()
   const [transaksi, setTransaksi] = useState([])
   const [detailTransaction, setDetailTransaction] = useState<detailTransaction[]>([]);
   const [id, setId] = useState("");
   const [product, setProduct] = useState([])
   const [noted, setNoted] = useState("");
   const [salesNote, setSalesNote] = useState("");
+  const [salesId, setSalesId] = useState("");
 
   useEffect(() => {
-    const authenticate = async () => {
-      if (!getToken()) {
-        router.push('/admin/login');
-        return null
-      }
-      const authorization = await verifyToken(getToken());
-
-      if (authorization.success === false) {
-        setAlert({
-          status: "warning",
-          message: "You are not authorized"
-        })
-        setToast(true)
-        setTimeout(() => {
-          setToast(false)
-        }, 2000);
-        router.push('/admin/login');
-      }
-
-      getTransaksiBySS(setTransaksi)
-
-    };
-
     authenticate();
-  }, [router]);
+    getTransaksiBySS(setTransaksi)
+  }, [authenticate]);
 
-  const handleDetailTransaction = async (id: string, brandId: string) => {
+  const handleDetailTransaction = async (id: string, brandId: string, salesId: string) => {
     setNoted("")
     setProduct([])
     setDetailTransaction([])
     setId("")
+    setSalesId(salesId)
     setId(id)
     await getSpesificTransaksi(setDetailTransaction, setProduct, setSalesNote, id, brandId);
   }
@@ -100,18 +74,19 @@ export default function Home() {
   };
 
   const cancelOrder = async (id: string) => {
-    const response = await cancelTransaksi(id);
-    if (response.status === "success") {
-      setAlert({
-        status: "success",
-        message: "Pesanan di cancel"
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      getTransaksiBySS(setTransaksi)
-    }
+    sendMessageToUser(salesId, "Pesanan di cancel")
+    // const response = await cancelTransaksi(id);
+    // if (response.status === "success") {
+    //   setAlert({
+    //     status: "success",
+    //     message: "Pesanan di cancel"
+    //   })
+    //   setToast(true)
+    //   setTimeout(() => {
+    //     setToast(false)
+    //   }, 2000);
+    //   getTransaksiBySS(setTransaksi)
+    // }
   }
 
   const confirmOrder = async (id: string) => {
@@ -139,9 +114,6 @@ export default function Home() {
 
   return (
     <Container>
-      {toast && (
-        <Toast status={alert.status} message={alert.message} />
-      )}
       <Navbar />
       <Content header="Pesanan" desc="Lihat dan proses pesanan baru!">
         <Card header="Transaksi belum di proses">
@@ -158,7 +130,7 @@ export default function Home() {
                   {item.processed_at === null ? "Not Confirm" : "Confirm"}
                 </span>
                 <div className="flex-1 justify-center items-center">
-                  <button onClick={e => handleDetailTransaction(item.id, item.brandId)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-green-600 hover:bg-green-700 text-white text-lg shadow-lg">
+                  <button onClick={e => handleDetailTransaction(item.id, item.brandId, item.created_by)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-green-600 hover:bg-green-700 text-white text-lg shadow-lg">
                     <FaCheck />
                     Confirm Order
                   </button>
