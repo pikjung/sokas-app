@@ -11,6 +11,7 @@ import { getKeranjang, updateKeranjang, updateDiscount, deleteKeranjang, checkOu
 import { useNotification } from "@/app/context/NotificationContext";
 import useSalesAuth from "@/app/hooks/salesUseAuth";
 import useFetchData from "@/app/admin/hooks/useFetchData";
+import useWebSocket from "@/app/hooks/useWebsocket";
 
 interface Store {
   id: string;
@@ -50,7 +51,10 @@ interface Item {
 const Home = () => {
 
   const { setAlert, setToast, showNotification } = useNotification();
-  const { authenticate } = useSalesAuth();
+  const { authenticate, userData } = useSalesAuth();
+
+  // useWebSocket(userData?.user_id)
+
   const [keranjang, setKeranjang] = useState<Item[]>([]);
   const [groupedKeranjang, setGroupedKeranjang] = useState<Record<string, {
     storeId: string;

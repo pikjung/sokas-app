@@ -13,6 +13,7 @@ import { addProductToCart, getBrand, getProduct, getToko } from "../handler/orde
 
 import useSales from "../../hooks/salesUseAuth"
 import { useNotification } from '../../context/NotificationContext';
+import useWebSocket from "@/app/hooks/useWebsocket";
 
 interface Product {
   id: string,
@@ -41,7 +42,9 @@ interface Toko {
 
 const Home = () => {
   const { setAlert, setToast } = useNotification();
-  const { authenticate } = useSales()
+  const { authenticate, userData } = useSales()
+
+  // useWebSocket(userData?.user_id)
 
   const [product, setProduct] = useState<Product[]>([]);
   const [searchProduct, setSearchProduct] = useState<Product[]>([]);

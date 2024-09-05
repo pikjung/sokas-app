@@ -7,12 +7,8 @@ import Container from "../components/Container"
 
 import moment from "moment";
 
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { verifyToken } from '../handler/authHandler'
 import { getHistoryBySS, getSpesificTransaksi } from "../handler/historyHandler"
-import { getToken } from '../utils/getToken'
-import Toast from "../components/Toast"
 import useSSAdminAuth from "@/app/hooks/ssAdminUseAuth"
 
 import Card from "../../components/Card"
@@ -26,41 +22,18 @@ const formatDate = (isoString: string): string => {
 
 export default function Home() {
 
-  const router = useRouter();
-  const [toast, setToast] = useState(false)
-  const [alert, setAlert] = useState({
-    status: "",
-    message: ""
-  })
+  const { authenticate, userData } = useSSAdminAuth()
+
+  // useWebSocket(userData?.user_id)
+
   const [transaksi, setTransaksi] = useState([])
   const [detailTransaction, setDetailTransaction] = useState([]);
 
   useEffect(() => {
-    const authenticate = async () => {
-      if (!getToken()) {
-        router.push('/admin/login');
-        return null
-      }
-      const authorization = await verifyToken(getToken());
-
-      if (authorization.success === false) {
-        setAlert({
-          status: "warning",
-          message: "You are not authorized"
-        })
-        setToast(true)
-        setTimeout(() => {
-          setToast(false)
-        }, 2000);
-        router.push('/admin/login');
-      }
-
-      getHistoryBySS(setTransaksi)
-
-    };
 
     authenticate();
-  }, [router]);
+    getHistoryBySS(setTransaksi)
+  }, [authenticate]);
 
   const handleDetailTransaction = async (id: string) => {
     setDetailTransaction([])

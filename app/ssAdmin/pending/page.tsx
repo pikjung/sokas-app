@@ -2,28 +2,26 @@
 
 import { useState, useEffect } from "react"
 import moment from "moment";
-import Content from "./components/Content"
-import Navbar from "./components/Navbar"
-import Container from "./components/Container"
-import Modal from "./components/Modal"
-import Card from "../components/Card"
+import Content from "../components/Content"
+import Navbar from "../components/Navbar"
+import Container from "../components/Container"
+import Modal from "../components/Modal"
+import Card from "../../components/Card"
 
 import {
-  getTransaksiBySS,
+  getTransaksiPendingSS,
   getSpesificTransaksi,
   confirmTransaksi,
   cancelTransaksi,
-  getConnectedUsers,
-  pendingTransaksi,
-  pendingModal
-} from "./handler/ssHandler"
+  getConnectedUsers
+} from "../handler/ssHandler"
 import useSSAdminAuth from "@/app/hooks/ssAdminUseAuth"
-import useWebSocket, { sendMessageToUser } from "../hooks/useWebsocket";
-import { useNotification } from "../context/NotificationContext";
+import useWebSocket, { sendMessageToUser } from "../../hooks/useWebsocket";
+import { useNotification } from "../../context/NotificationContext";
 
 import { FaCheck } from "react-icons/fa"
 import { LiaPaperPlane } from "react-icons/lia"
-import UserList from "./components/UserList";
+import UserList from "../components/UserList";
 
 const formatDate = (isoString: string): string => {
   return moment(isoString).format('DD-MM-YYYY');
@@ -53,13 +51,12 @@ export default function Home() {
   const [noted, setNoted] = useState("");
   const [salesNote, setSalesNote] = useState("");
   const [salesId, setSalesId] = useState("");
-  const [pendingNote, setPendingNote] = useState("");
   // const [users, setUsers] = useState([])
 
   useEffect(() => {
     authenticate();
     // getConnectedUsers(setUsers)
-    getTransaksiBySS(setTransaksi)
+    getTransaksiPendingSS(setTransaksi)
   }, [authenticate]);
 
   // console.log(users)
@@ -99,22 +96,7 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getTransaksiBySS(setTransaksi)
-    }
-  }
-
-  const pendingOrder = async (id: string, pendingNote: string) => {
-    const response = await pendingTransaksi(id, pendingNote);
-    if (response.status === "success") {
-      setAlert({
-        status: "success",
-        message: "Pesanan di pending"
-      })
-      setToast(true)
-      setTimeout(() => {
-        setToast(false)
-      }, 2000);
-      getTransaksiBySS(setTransaksi)
+      getTransaksiPendingSS(setTransaksi)
     }
   }
 
@@ -129,7 +111,7 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getTransaksiBySS(setTransaksi)
+      getTransaksiPendingSS(setTransaksi)
     }
   }
 
@@ -146,24 +128,29 @@ export default function Home() {
           {/* <UserList users={users} /> */}
         </Card>
         <div className="my-4"></div>
-        <Card header="Transaksi belum di proses">
+        <Card header="Transaksi di Pending">
           <ul className="divide-y divide-slate-200">
             {transaksi.map((item: any) => (
-              <li className="flex py-4 first:pt-0 last:pb-0" key={item.id}>
-                <p className={`text-${item.Brand.color} w-24`}>{item.Brand.name}</p>
-                <p className="flex-1 flex items-center justify-center font-bold">{item.Store.name}</p>
-                <div className="overflow-hidden flex-1">
-                  <p className="text-sm font-medium text-slate-900">{item.order_no}</p>
-                  <p className="text-sm text-slate-500 truncate">Order date: {formatDate(item.created_at)}</p>
+              <li className="flex-wrap py-4 first:pt-0 last:pb-0" key={item.id}>
+                <div className="flex">
+                  <p className={`text-${item.Brand.color} w-24`}>{item.Brand.name}</p>
+                  <p className="flex-1 flex items-center justify-center font-bold">{item.Store.name}</p>
+                  <div className="overflow-hidden flex-1">
+                    <p className="text-sm font-medium text-slate-900">{item.order_no}</p>
+                    <p className="text-sm text-slate-500 truncate">Order date: {formatDate(item.created_at)}</p>
+                  </div>
+                  <span className={`flex-none rounded-lg py-1 px-2 items-center justify-center text-sm ${item.processed_at === null ? "text-red-700" : "text-green-700"}`}>
+                    {item.processed_at === null ? "Not Confirm" : "Confirm"}
+                  </span>
+                  <div className="flex-1 justify-center items-center">
+                    <button onClick={e => handleDetailTransaction(item.id, item.brandId, item.created_by)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-green-600 hover:bg-green-700 text-white text-lg shadow-lg">
+                      <FaCheck />
+                      Confirm Order
+                    </button>
+                  </div>
                 </div>
-                <span className={`flex-none rounded-lg py-1 px-2 items-center justify-center text-sm ${item.processed_at === null ? "text-red-700" : "text-green-700"}`}>
-                  {item.processed_at === null ? "Not Confirm" : "Confirm"}
-                </span>
-                <div className="flex-1 justify-center items-center">
-                  <button onClick={e => handleDetailTransaction(item.id, item.brandId, item.created_by)} className="flex float-end gap-2 rounded-lg py-1 px-2 bg-green-600 hover:bg-green-700 text-white text-lg shadow-lg">
-                    <FaCheck />
-                    Confirm Order
-                  </button>
+                <div className="flex flex-nowrap mt-2">
+                  <div className="flex-1">Pending Note: <p className="font-semibold text-slate-600">{item.pending_note}</p></div>
                 </div>
               </li>
             ))}
@@ -229,15 +216,6 @@ export default function Home() {
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="submit"
-              className="rounded-xl flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white hover:bg-yellow-700"
-              onClick={(e) => {
-                setId(id)
-                pendingModal()
-              }}
-            >
-              Pending
-            </button><button
-              type="submit"
               className="rounded-xl flex items-center gap-2 px-4 py-2 bg-red-600 text-white hover:bg-red-700"
               onClick={(e) => cancelOrder(id)}
             >
@@ -249,27 +227,6 @@ export default function Home() {
               onClick={(e) => confirmOrder(id)}
             >
               Confirm
-              <LiaPaperPlane size={20} />
-            </button>
-          </div>
-        </Modal>
-        <Modal header="Confirm Pending" idName="pendingModal">
-          <label htmlFor="">Pending Note: </label>
-          <textarea
-            className="w-full p-2 border bg-slate-100 border-slate-400 rounded"
-            name=""
-            id=""
-            onChange={(e) => setPendingNote(e.target.value)}
-          >
-            {pendingNote}
-          </textarea>
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              type="submit"
-              className="rounded-xl flex items-center gap-2 px-4 py-2 bg-teal-600 text-white hover:bg-teal-700"
-              onClick={(e) => pendingOrder(id, pendingNote)}
-            >
-              Confirm Pending
               <LiaPaperPlane size={20} />
             </button>
           </div>

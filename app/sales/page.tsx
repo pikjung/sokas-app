@@ -13,7 +13,7 @@ import useWebSocket from "../hooks/useWebsocket";
 export default function Home() {
   const { authenticate, userData } = useSalesAuth();
 
-  useWebSocket(userData?.user_id)
+  // useWebSocket(userData?.user_id)
 
   useEffect(() => {
     authenticate();

@@ -14,7 +14,7 @@ interface UserData {
 const useSSAdminAuth = () => {  // Nama hook diperbaiki
   const router = useRouter();
   const { showNotification } = useNotification();
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<UserData>();
 
 
   const authenticate = useCallback(async () => {

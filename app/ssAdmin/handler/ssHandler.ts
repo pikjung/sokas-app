@@ -141,3 +141,86 @@ export const transaksiConfirm = async (formConfirm: any) => {
     }
   }
 }
+
+export const getConnectedUsers = async (setUsers: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}/connected-users`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    });
+    setUsers(response.data.data)
+    return response.data
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      // Jika itu error 401, ambil pesan error dari respons
+      return {
+        success: false,
+        data: error.response.data
+      }
+    } else {
+      // Tangani kesalahan lainnya
+      console.error('Error:', error);
+    }
+  }
+}
+
+export const pendingTransaksi = async (id: string, pendingNote: string) => {
+  try {
+    const response = await axios.post(`${apiUrl}/ssAdmin/transaksi/pending`, {
+      id: id,
+      pendingNote: pendingNote
+    }, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+    const pendingModal = <HTMLElement>document.getElementById("pendingModal") as HTMLDialogElement | null;
+    if (pendingModal) {
+      pendingModal.close();
+    }
+    return response.data
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      // Jika itu error 401, ambil pesan error dari respons
+      return {
+        success: false,
+        data: error.response.data
+      }
+    } else {
+      // Tangani kesalahan lainnya
+      console.error('Error:', error);
+    }
+  }
+}
+
+export const pendingModal = async () => {
+  const pendingModal = <HTMLElement>document.getElementById("pendingModal") as HTMLDialogElement | null;
+  const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
+  if (pendingModal && formModal) {
+    formModal.close();
+    pendingModal.showModal();
+  }
+}
+
+export const getTransaksiPendingSS = async (setTransaksi: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}/ssAdmin/transaksi/pending`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+    setTransaksi(response.data.data)
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      // Jika itu error 401, ambil pesan error dari respons
+      return {
+        success: false,
+        data: error.response.data
+      }
+    } else {
+      // Tangani kesalahan lainnya
+      console.error('Error:', error);
+    }
+  }
+}

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { GoGear } from "react-icons/go";
-import { MdDashboard, MdLogout } from "react-icons/md";
+import { MdDashboard, MdLogout, MdOutlinePendingActions } from "react-icons/md";
 import { deleteToken } from "../utils/getToken";
 import { CiMail, CiTimer } from "react-icons/ci";
 
@@ -17,6 +17,11 @@ const nav = [
     desc: 'Check Pesanan disini!'
   },
   {
+    name: 'Pending',
+    url: '/ssAdmin/pending',
+    icon: MdOutlinePendingActions,
+    desc: 'Lihat pesanan pending!'
+  }, {
     name: 'History',
     url: '/ssAdmin/history',
     icon: CiTimer,
