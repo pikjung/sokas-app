@@ -24,7 +24,7 @@ export const verifyToken = async (token: any) => {
         Authorization: "Bearer " + token,
       },
     });
-    if (response.data.data.role !== 'sales') {
+    if (response.data.data.role !== 'spv') {
       deleteToken()
       throw new Error("Invalid Role")
     }

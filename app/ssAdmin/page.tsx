@@ -15,7 +15,8 @@ import {
   cancelTransaksi,
   getConnectedUsers,
   pendingTransaksi,
-  pendingModal
+  pendingModal,
+  getAllSSusers
 } from "./handler/ssHandler"
 import useSSAdminAuth from "@/app/hooks/ssAdminUseAuth"
 import useWebSocket, { sendMessageToUser } from "../hooks/useWebsocket";
@@ -49,18 +50,23 @@ export default function Home() {
   const [transaksi, setTransaksi] = useState([])
   const [detailTransaction, setDetailTransaction] = useState<detailTransaction[]>([]);
   const [id, setId] = useState("");
+  const [ssUsers, setSSUsers] = useState([])
   const [product, setProduct] = useState([])
   const [noted, setNoted] = useState("");
   const [salesNote, setSalesNote] = useState("");
   const [salesId, setSalesId] = useState("");
   const [pendingNote, setPendingNote] = useState("");
   // const [users, setUsers] = useState([])
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+
+  console.log(userData?.user_id)
 
   useEffect(() => {
-    authenticate();
     // getConnectedUsers(setUsers)
-    getTransaksiBySS(setTransaksi)
-  }, [authenticate]);
+    getTransaksiBySS(userData?.user_id, setTransaksi)
+    getAllSSusers(setSSUsers)
+    setUserId(userData?.user_id)
+  }, [userData?.user_id, authenticate]);
 
   // console.log(users)
   const handleDetailTransaction = async (id: string, brandId: string, salesId: string) => {
@@ -99,7 +105,7 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getTransaksiBySS(setTransaksi)
+      getTransaksiBySS(userId, setTransaksi)
     }
   }
 
@@ -114,7 +120,7 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getTransaksiBySS(setTransaksi)
+      getTransaksiBySS(userId, setTransaksi)
     }
   }
 
@@ -129,8 +135,13 @@ export default function Home() {
       setTimeout(() => {
         setToast(false)
       }, 2000);
-      getTransaksiBySS(setTransaksi)
+      getTransaksiBySS(userId, setTransaksi)
     }
+  }
+
+  const changeTransaksi = (id: string) => {
+    setUserId(id)
+    getTransaksiBySS(id, setTransaksi)
   }
 
 
@@ -142,11 +153,30 @@ export default function Home() {
     <Container>
       <Navbar />
       <Content header="Pesanan" desc="Lihat dan proses pesanan baru!">
-        <Card header="Sales Online">
-          {/* <UserList users={users} /> */}
-        </Card>
+        {/* <Card header="Sales Online">
+          <UserList users={users} />
+        </Card> */}
         <div className="my-4"></div>
         <Card header="Transaksi belum di proses">
+          <div className="flex flex-wrap gap-2 mb-6">
+            <button
+              onClick={e => changeTransaksi(userData.user_id)}
+              key={userData.user_id}
+              className="border border-blue-500 text-blue-500 px-3 py-1 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-200"
+            >
+              {userData.name}
+            </button>
+            {ssUsers.map((item: any) => (
+              <button
+                onClick={e => changeTransaksi(item.id)}
+                key={item.id}
+                className="border border-blue-500 text-blue-500 px-3 py-1 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-200"
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+
           <ul className="divide-y divide-slate-200">
             {transaksi.map((item: any) => (
               <li className="flex py-4 first:pt-0 last:pb-0" key={item.id}>

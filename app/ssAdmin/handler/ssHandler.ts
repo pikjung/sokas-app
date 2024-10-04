@@ -3,14 +3,39 @@ import axios from "axios";
 import { getToken } from "../utils/getToken";
 import Head from "next/head";
 
-export const getTransaksiBySS = async (setTransaksi: any) => {
+export const getTransaksiBySS = async (user_id: any, setTransaksi: any) => {
   try {
     const response = await axios.get(`${apiUrl}/ssAdmin/transaksi`, {
       headers: {
         Authorization: `Bearer ${getToken()}`
+      },
+      params: {
+        user_id: user_id
       }
     })
     setTransaksi(response.data.data)
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      // Jika itu error 401, ambil pesan error dari respons
+      return {
+        success: false,
+        data: error.response.data
+      }
+    } else {
+      // Tangani kesalahan lainnya
+      console.error('Error:', error);
+    }
+  }
+}
+
+export const getAllSSusers = async (setSSUsers: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}/ssAdmin/transaksi/ssusers`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+    setSSUsers(response.data.data)
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       // Jika itu error 401, ambil pesan error dari respons
