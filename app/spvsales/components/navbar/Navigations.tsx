@@ -5,26 +5,26 @@ export const navigations = [
   {
     name: 'Home',
     icon: CiHome,
-    url: '/sales/'
+    url: '/spvsales/'
   },
   {
     name: 'Order',
     icon: CiShop,
-    url: '/sales/order'
+    url: '/spvsales/order'
   },
   {
     name: 'Transaksi',
     icon: CiReceipt,
-    url: '/sales/transaksi'
+    url: '/spvsales/transaksi'
   },
   {
     name: 'Keranjang',
     icon: CiShoppingBasket,
-    url: '/sales/keranjang'
+    url: '/spvsales/keranjang'
   },
   {
     name: 'KULES',
     icon: FaMapMarkerAlt,
-    url: '/sales/kules'
+    url: '/spvsales/kules'
   },
 ]

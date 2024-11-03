@@ -27,11 +27,13 @@ import {
   fetchData,
   deleteHandler
 } from '../../handler/brandHandler'
+import { SlOrganization } from "react-icons/sl"
 
 interface FormData {
   name: string,
   color: string,
-  value: string
+  value: string,
+  trx_organization: string;
 }
 
 export default function Brand() {
@@ -46,6 +48,7 @@ export default function Brand() {
     name: "",
     color: "",
     value: "",
+    trx_organization: "",
   })
 
   const [formMethod, setFormMethod] = useState("create")
@@ -211,6 +214,7 @@ export default function Brand() {
                 <td>{item.name}</td>
                 <td>{item.color}</td>
                 <td>{item.value}</td>
+                <td>{item.trx_organization}</td>
                 <td>
                   <div className="flex gap-2">
                     <button className="border-0" onClick={() => editHandler(item, setFormData, setId, setFormMethod, setHeader)}>
@@ -259,6 +263,17 @@ export default function Brand() {
               className="grow"
               placeholder="PAN"
               value={formData.value}
+              onChange={(event) => handleChange(event)}
+            />
+          </TextInput>
+
+          <TextInput label="TRX Organization" icon={SlOrganization}>
+            <input
+              name="trx_organization"
+              type="text"
+              className="grow"
+              placeholder="P11"
+              value={formData.trx_organization}
               onChange={(event) => handleChange(event)}
             />
           </TextInput>

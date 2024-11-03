@@ -2,7 +2,7 @@
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/app/admin/utils/getToken';
-import { verifyToken } from '@/app/spvsales/handler/authHandler';
+import { verifyToken } from '@/app/dataanalis/handler/authHandler';
 import { useNotification } from '@/app/context/NotificationContext';
 
 interface UserData {
@@ -11,7 +11,7 @@ interface UserData {
   role: string;
 }
 
-const useSpvAuth = () => {  // Nama hook diperbaiki
+const useDataAnalisAuth = () => {  // Nama hook diperbaiki
   const router = useRouter();
   const { showNotification } = useNotification();
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -42,4 +42,4 @@ const useSpvAuth = () => {  // Nama hook diperbaiki
   return { authenticate, showNotification, userData };
 };
 
-export default useSpvAuth; // Nama hook diperbaiki
+export default useDataAnalisAuth; // Nama hook diperbaiki

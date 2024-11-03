@@ -56,6 +56,10 @@ export default function Home() {
             router.push('/sales')
           } else if (res.data.data.role === 'ssAdmin') {
             router.push('/ssAdmin')
+          } else if (res.data.data.role === 'spvSales') {
+            router.push('/spvsales')
+          } else if (res.data.data.role === 'dataanalis') {
+            router.push('/dataanalis')
           } else {
             deleteToken()
             router.push('/admin/login')

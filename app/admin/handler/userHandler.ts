@@ -56,9 +56,9 @@ export const rolefetchData = async () => {
 
 export const buttonHandler = (setFormData: any, setHeader: any, setFormMethod: any) => {
   setFormData({
-    fullName: "",
+    name: "",
     email: "",
-    userName: "",
+    username: "",
     password: "",
     role: 1,
   });
@@ -159,10 +159,11 @@ export const editHandler = (
   setFormMethod: any,
   setHeader: any
 ) => {
+  // console.log(item)
   setFormData({
-    fullName: item.name,
+    name: item.name,
     email: item.email,
-    userName: item.username,
+    username: item.username,
     password: "",
     role: item.Role?.id,
   });

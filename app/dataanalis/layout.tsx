@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../globals.css'
-import Navbar from './components/navbar/Navbar'
+import { FormProvider } from '../admin/hooks/FormContext'
 import { NotificationProvider } from '../context/NotificationContext'
 import NotificationProviderComponent from '../components/NotificationProvider'
-import BottomNavigation from './components/navbar/BottomNavigation'
-
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,12 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NotificationProvider>
-          <Navbar />
           <NotificationProviderComponent />
-          {children}
-          <div className="mb-12 mt-12"></div>
+          <FormProvider>
+            {children}
+          </FormProvider>
         </NotificationProvider>
-        <BottomNavigation />
       </body>
     </html>
   )

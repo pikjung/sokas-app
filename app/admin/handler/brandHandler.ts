@@ -30,7 +30,8 @@ export const buttonHandler = (setFormData: any, setHeader: any, setFormMethod: a
   setFormData({
     name: "",
     color: "",
-    value: ""
+    value: "",
+    trx_organization: "",
   })
   setFormMethod("create")
   const formModal = <HTMLElement>document.getElementById("formModal") as HTMLDialogElement | null;
@@ -52,7 +53,8 @@ export const formHandler = async (
       const data = {
         name: formData.name,
         color: formData.color,
-        value: formData.value
+        value: formData.value,
+        trx_organization: formData.trx_organization,
       }
       const url = `${apiUrl}/admin/brand`
       const response = await axios.post(url, data, {
@@ -87,7 +89,8 @@ export const formHandler = async (
       const data = {
         name: formData.name,
         color: formData.color,
-        value: formData.value
+        value: formData.value,
+        trx_organization: formData.trx_organization,
       }
       const url = `${apiUrl}/admin/brand/${id}`
       const response = await axios.put(url, data, {
@@ -128,7 +131,8 @@ export const editHandler = (
   setFormData({
     name: item.name,
     color: item.color,
-    value: item.value
+    value: item.value,
+    trx_organization: item.trx_organization || "",
   })
   setId(item.id)
   setFormMethod("update")
